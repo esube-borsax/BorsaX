@@ -3632,6 +3632,7 @@ function flashOnChange(el, val){            // değer arttıysa yeşil, azaldıy
   el.classList.add(val > prev ? 'flash-up' : 'flash-down');
 }
 function openPlTotal(u){
+    if(!u || !Array.isArray(u.positions)) return 0;   // oturum yokken/yüklenirken tickMarket hata fırlatmasın
   // Her pozisyonun K/Z'si kendi para biriminde (USD/USDT/TRY) — TL'ye çevirmeden toplamak
   // dolar kârıyla TL kârını ham sayı olarak birbirine eklemek anlamına gelir. balance/futuresBalance
   // TL olduğundan bu fonksiyon da TL cinsinden döner; ekranda toDisp() ile gösterim birimine çevrilir.
