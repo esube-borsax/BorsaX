@@ -3223,11 +3223,32 @@ function iconFor(cat, sym){
   const found = list && list.find(x=>x.sym===sym);
   return (found && found.icon) || null;
 }
+/* ===== Hisse logoları — Supabase Storage > "logos" kovası (herkese açık) =====
+   Dosya adları: bist/THYAO.png · us/AAPL.png · crypto/BTC.png  (küçük kare PNG/SVG, ~64x64 yeter)
+   Logo yoksa ya da yüklenemezse harf rozeti kalır. Logo yalnızca yüklendikten sonra görünür ve
+   bir kez yüklenen/başarısız olan adres hatırlanır; liste tazelendiğinde yanıp sönme olmaz. */
+const LOGO_BASE = SUPABASE_URL + '/storage/v1/object/public/logos/';
+const LOGO_CATS = { bist:1, us:1, crypto:1 };
+const logoState = {};                                       // adres -> 'ok' | 'bad'
+function logoLoaded(img){
+  logoState[img.dataset.u] = 'ok';
+  img.style.opacity = '1';
+  const ic = img.closest('.sym-ic'); if(ic) ic.classList.add('sym-ic-hasicon');
+}
+function logoFailed(img){ logoState[img.dataset.u] = 'bad'; img.remove(); }
 function symBadge(sym, cat, size){
   size = size || 26;
   const glyph = CATEGORY_GLYPH[cat] || CATEGORY_GLYPH.crypto;
-  const img = '';   // logo özelliği kaldırıldı: liste her tazelendiğinde <img> yeniden oluşup beyaz yanıp sönüyordu
-  return `<div class="sym-ic" style="background:${colorFor(sym)}; width:${size}px; height:${size}px;">
+  let img = '', cls = '';
+  if(LOGO_CATS[cat]){
+    const u = LOGO_BASE + cat + '/' + encodeURIComponent(sym) + '.png';
+    const st = logoState[u];
+    if(st !== 'bad'){
+      cls = st === 'ok' ? ' sym-ic-hasicon' : '';
+      img = `<img class="sym-ic-img" src="${u}" data-u="${u}" alt="" decoding="async" style="opacity:${st==='ok'?1:0}" onload="logoLoaded(this)" onerror="logoFailed(this)">`;
+    }
+  }
+  return `<div class="sym-ic${cls}" style="background:${colorFor(sym)}; width:${size}px; height:${size}px;">
     ${img}<span class="sym-ic-letters">${sym.slice(0,2)}</span>
     <span class="sym-ic-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">${glyph}</svg></span>
   </div>`;
