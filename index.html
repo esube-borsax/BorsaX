@@ -1911,7 +1911,7 @@ button.quick-tile:focus-visible{outline:2px solid var(--accent); outline-offset:
               <div class="order-row"><span>Pozisyon Değeri (Nominal)</span><span class="mono" id="order-value">--</span></div>
               
               <div class="order-row"><span>Alım Gücünüz</span><span class="mono" id="order-buying-power">--</span></div>
-              <div class="order-note" id="order-lev-note" hidden>İşlem tutarı <b id="order-lev-note-lot">doğrudan</b>bakiyenizden tahsil <b id="order-lev-note-eff">edilir.</b> </div>
+              <div class="order-note" id="order-lev-note" hidden>İşlem tutarı <b id="order-lev-note-lot"></b> ,bakiyenizden tahsil edilecektir. <b id="order-lev-note-eff">edilir.</b> </div>
               <div class="order-note" id="order-insufficient-note" hidden style="color:var(--red); font-weight:600;">Bu miktar alım gücünüzü aşıyor.</div>
             </div>
 
@@ -4649,16 +4649,19 @@ function updateOrderSummary(){
   const levEl = document.getElementById('order-lev');
   if(levEl){ levEl.textContent = '×' + lev; levEl.classList.toggle('hi', lev > 50); }
   const sizeEl = document.getElementById('order-size');
-  if(sizeEl) sizeEl.textContent = lev > 1 ? eff + ' ' + unit + ' (' + lot + ' × ' + lev + ')' : lot + ' ' + unit;
+ if(sizeEl) sizeEl.textContent = lot + ' ' + unit;
   const note = document.getElementById('order-lev-note');
-  if(note){
+if(note){
     note.hidden = !(lev > 1);
     if(lev > 1){
-      document.getElementById('order-lev-note-lot').textContent = lot + ' ' + unit;
-      document.getElementById('order-lev-note-eff').textContent = eff + ' ' + unit;
+        const lotEl = document.getElementById('order-lev-note-lot');
+        if(lotEl) lotEl.textContent = lot + ' ' + unit;
+        
+        const effEl = document.getElementById('order-lev-note-eff');
+        if(effEl) effEl.textContent = '';
     }
-  }
-  document.getElementById('order-value').textContent = fmtPrice(price * eff)+' '+currentTrade.currency;
+}
+ document.getElementById('order-value').textContent = fmtPrice(price)+' '+currentTrade.currency;
 
   /* Gereken marj = fiyat × girilen (kaldıraçsız) lot — sunucudaki open_position ile aynı hesap.
      Alım gücü = Spot + Vadeli toplamı (marj zaten açık pozisyonlarda kilitli olduğundan,
