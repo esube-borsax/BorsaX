@@ -537,7 +537,52 @@ svg{display:block;}
   display:flex; align-items:center; gap:12px; background:var(--card); border:1px solid var(--border-soft);
   border-radius:12px; padding:12px 15px;
 }
+.closed-item{cursor:pointer; transition:border-color .15s, transform .15s, background .15s;}
+.closed-item:hover{border-color:var(--border); background:var(--card-2); transform:translateY(-1px);}
 .closed-item .sym-ic{opacity:.85;}
+#trade-detail-modal{display:none; position:fixed; inset:0; background:rgba(4,5,9,0.82); backdrop-filter:blur(6px); z-index:200; align-items:center; justify-content:center; padding:20px;}
+#trade-detail-modal.open{display:flex;}
+.td-card{width:100%; max-width:440px; max-height:92vh; overflow-y:auto; background:var(--card); border:1px solid var(--border); border-radius:22px; box-shadow:var(--shadow-pop); animation:fadeIn .2s ease; position:relative;}
+.td-head{display:flex; align-items:center; gap:12px; padding:16px 18px 0;}
+.td-head-mid{flex:1; min-width:0;}
+.td-sym{font-size:17px; font-weight:800; display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
+.td-sub{font-size:11.5px; color:var(--text-dim); margin-top:3px;}
+.td-x{width:32px; height:32px; border-radius:10px; border:1px solid var(--border-soft); background:var(--bg); color:var(--text-dim); display:flex; align-items:center; justify-content:center; cursor:pointer; flex:none;}
+.td-x:hover{color:var(--text);} .td-x .icon{width:15px; height:15px;}
+.td-hero{margin:14px 18px 18px; padding:16px 18px 14px; border-radius:16px; text-align:center; border:1px solid var(--border-soft);}
+.td-hero.up{background:radial-gradient(120% 140% at 50% 0%, rgba(34,207,148,0.16), rgba(34,207,148,0.02) 70%), var(--bg);}
+.td-hero.down{background:radial-gradient(120% 140% at 50% 0%, rgba(246,70,93,0.16), rgba(246,70,93,0.02) 70%), var(--bg);}
+.td-hero-lab{font-size:11px; font-weight:700; letter-spacing:.6px; color:var(--text-dim); text-transform:uppercase;}
+.td-hero-val{font-size:30px; font-weight:800; margin:5px 0 0; font-variant-numeric:tabular-nums; letter-spacing:-.5px;}
+.td-hero.up .td-hero-val, .td-hero.up .td-hero-pct{color:var(--green);}
+.td-hero.down .td-hero-val, .td-hero.down .td-hero-pct{color:var(--red);}
+.td-hero-pct{display:inline-block; font-size:12px; font-weight:700; padding:3px 10px; border-radius:20px; background:rgba(255,255,255,0.06);}
+.td-path{display:flex; align-items:center; gap:10px; margin:10px 18px 0; padding:11px 14px; border-radius:14px; background:var(--bg); border:1px solid var(--border-soft);}
+.td-node{flex:none; min-width:0;}
+.td-node.r{text-align:right;}
+.td-node small{display:block; font-size:10px; font-weight:700; letter-spacing:.5px; color:var(--text-dim); text-transform:uppercase; margin-bottom:3px;}
+.td-node b{font-size:15px; font-weight:800; font-variant-numeric:tabular-nums;}
+.td-line{flex:1; position:relative; height:44px; min-width:0; color:var(--text-dim);}
+.td-line svg{position:absolute; inset:0; width:100%; height:100%; overflow:visible;}
+.td-line .cv{fill:none; stroke:url(#tdg); stroke-width:2.2; stroke-linecap:round; vector-effect:non-scaling-stroke; filter:drop-shadow(0 0 5px currentColor);}
+.td-line .ar{fill:url(#tda); stroke:none;}
+.td-dot{position:absolute; width:11px; height:11px; margin:-5.5px 0 0 -5.5px; border-radius:50%; background:var(--bg); border:2px solid var(--text-dim);}
+.td-dot.s{left:0;}
+.td-dot.e{left:100%; background:currentColor; border-color:currentColor; box-shadow:0 0 0 4px rgba(255,255,255,0.06), 0 0 14px currentColor;}
+.td-dot.e::after{content:''; position:absolute; inset:-5px; border-radius:50%; border:1.5px solid currentColor; opacity:.55; animation:tdPing 1.8s ease-out infinite;}
+@keyframes tdPing{0%{transform:scale(.6); opacity:.7;} 100%{transform:scale(1.9); opacity:0;}}
+.td-path.up .td-line{color:var(--green);} .td-path.down .td-line{color:var(--red);}
+.td-hero .td-path{margin:14px 0 0; padding:14px 0 0; background:transparent; border:none; border-top:1px solid rgba(255,255,255,0.09); border-radius:0; text-align:left;}
+.td-dates{display:flex; justify-content:space-between; gap:10px; margin-top:12px; padding-top:11px; border-top:1px dashed rgba(255,255,255,0.09); text-align:left;}
+.td-dates .r{text-align:right;}
+.td-dates small{display:block; font-size:9.5px; font-weight:700; letter-spacing:.5px; color:var(--text-dim); text-transform:uppercase; margin-bottom:2px;}
+.td-dates b{font-size:11px; font-weight:600; color:var(--text); opacity:.85; font-variant-numeric:tabular-nums;}
+.td-grid{display:grid; grid-template-columns:1fr 1fr; gap:8px; padding:10px 18px 16px;}
+.td-cell{background:var(--bg); border:1px solid var(--border-soft); border-radius:12px; padding:9px 12px; min-width:0;}
+.td-cell small{display:block; font-size:10px; font-weight:700; letter-spacing:.5px; color:var(--text-dim); text-transform:uppercase; margin-bottom:4px;}
+.td-cell b{font-size:13px; font-weight:700; font-variant-numeric:tabular-nums; word-break:break-word;}
+.td-cell.wide{grid-column:1 / -1;}
+.td-note{margin:-6px 18px 14px; font-size:11px; color:var(--text-dim); text-align:center;}
 .closed-item-mid{flex:1; min-width:0;}
 .closed-item-sym{font-size:13px; font-weight:700; display:flex; align-items:center; gap:7px;}
 .closed-item-meta{font-size:11px; color:var(--text-dim); margin-top:3px;}
@@ -969,6 +1014,51 @@ textarea.sup-input{resize:vertical; min-height:130px; line-height:1.55;}
 .order-summary{background:var(--bg); border:1px solid var(--border-soft); border-radius:var(--radius-sm); padding:13px 14px; margin-bottom:16px;}
 .order-row{display:flex; justify-content:space-between; font-size:12.5px; padding:5px 0; color:var(--text-dim);}
 .order-row span:last-child{color:var(--text); font-weight:700;}
+.tpsl-box{background:linear-gradient(180deg,rgba(255,255,255,0.028),rgba(255,255,255,0)),var(--bg); border:1px solid var(--border-soft); border-radius:var(--radius-sm); padding:12px 14px 4px; margin-bottom:16px;}
+.tpsl-head{display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:8px;}
+.tpsl-title{display:flex; align-items:center; gap:7px; font-size:12px; font-weight:700; color:var(--text); letter-spacing:.2px;}
+.tpsl-title .icon{width:15px; height:15px; stroke:var(--accent);}
+.tpsl-rr{font-size:10px; font-weight:700; color:var(--accent); background:rgba(255,255,255,0.06); border-radius:6px; padding:2px 7px; letter-spacing:.3px;}
+.tpsl-rr:empty{display:none;}
+.tpsl-mode{display:flex; background:rgba(255,255,255,0.05); border-radius:8px; padding:2px;}
+.tpsl-mode button{background:transparent; border:none; color:var(--text-dim); font-size:11px; font-weight:700; padding:4px 11px; border-radius:6px; cursor:pointer; transition:background .15s,color .15s;}
+.tpsl-mode button.on{background:var(--accent); color:#1a1405;}
+.tpsl-row{padding:10px 0 10px; border-top:1px solid var(--border-soft);}
+.tpsl-line{display:flex; align-items:center; gap:10px;}
+.tpsl-lab{display:flex; align-items:center; gap:8px; width:104px; flex:none; font-size:12px; font-weight:700; color:var(--text);}
+.tpsl-lab i{width:3px; height:17px; border-radius:2px; background:var(--green);}
+.tpsl-row.sl .tpsl-lab i{background:var(--red);}
+.tpsl-field{flex:1; min-width:0; display:flex; align-items:center; background:rgba(255,255,255,0.035); border:1px solid var(--border-soft); border-radius:9px; padding:0 11px; height:38px; transition:border-color .15s, box-shadow .15s;}
+.tpsl-row.tp .tpsl-field:focus-within{border-color:var(--green); box-shadow:0 0 0 3px rgba(34,207,148,0.13);}
+.tpsl-row.sl .tpsl-field:focus-within{border-color:var(--red); box-shadow:0 0 0 3px rgba(246,70,93,0.13);}
+.tpsl-row.bad .tpsl-field{border-color:var(--red); box-shadow:0 0 0 3px rgba(246,70,93,0.16);}
+.tpsl-field input{flex:1; min-width:0; height:100%; background:transparent; border:none; outline:none; color:var(--text); font-size:14px; font-weight:700; text-align:right; padding:0;}
+.tpsl-field input::placeholder{color:var(--text-dim); font-weight:500; font-size:12.5px;}
+.tpsl-unit{font-style:normal; font-size:10.5px; font-weight:700; color:var(--text-dim); margin-left:8px; letter-spacing:.3px; min-width:24px; text-align:left;}
+.tpsl-chips{display:none; gap:5px; margin:8px 0 0 114px;}
+.tpsl-box.pct .tpsl-chips{display:flex;}
+.tpsl-chips button{flex:1; padding:4px 0; font-size:10.5px; font-weight:700; border-radius:6px; background:transparent; border:1px solid var(--border-soft); color:var(--text-dim); cursor:pointer; transition:border-color .15s,color .15s;}
+.tpsl-row.tp .tpsl-chips button:hover{border-color:var(--green); color:var(--green);}
+.tpsl-row.sl .tpsl-chips button:hover{border-color:var(--red); color:var(--red);}
+.tpsl-ref{display:flex; justify-content:space-between; align-items:center; font-size:10.5px; color:var(--text-dim); margin:0 0 9px; padding:6px 9px; background:rgba(255,255,255,0.03); border-radius:7px;}
+.tpsl-ref b{color:var(--text); font-weight:700; font-size:11.5px;}
+.tpsl-x{display:none; background:transparent; border:none; color:var(--text-dim); font-size:17px; line-height:1; cursor:pointer; padding:0 0 0 7px;}
+.tpsl-x:hover{color:var(--text);}
+.tpsl-field.has .tpsl-x{display:block;}
+.tpsl-bar{border-top:1px solid var(--border-soft); padding:11px 0 12px;}
+.tpsl-bar[hidden]{display:none;}
+.tpsl-bar-track{display:flex; gap:3px; height:7px;}
+.tpsl-bar-track span{display:block; height:100%; min-width:6%; transition:flex-grow .25s ease;}
+.tpsl-bar-track .r{background:linear-gradient(90deg,rgba(246,70,93,0.55),var(--red)); border-radius:4px 2px 2px 4px;}
+.tpsl-bar-track .g{background:linear-gradient(90deg,var(--green),rgba(34,207,148,0.55)); border-radius:2px 4px 4px 2px;}
+.tpsl-bar-lab{display:flex; justify-content:space-between; margin-top:7px; font-size:10.5px; font-weight:700;}
+.tpsl-bar-lab .r{color:var(--red);} .tpsl-bar-lab .g{color:var(--green);}
+.tpsl-hint{margin:7px 0 0 114px; font-size:10.5px; color:var(--text-dim); display:flex; justify-content:space-between; gap:8px; flex-wrap:wrap;}
+.tpsl-hint:empty{display:none;}
+.tpsl-hint b{font-weight:700;} .tpsl-hint b.tp{color:var(--green);} .tpsl-hint b.sl{color:var(--red);}
+.pos-tpsl{display:flex; gap:8px; flex-wrap:wrap; margin:2px 0 10px; font-size:11px;}
+.pos-tpsl span{padding:3px 8px; border-radius:6px; font-weight:700;}
+.pos-tpsl .tp{color:var(--green); background:rgba(34,207,148,0.13);} .pos-tpsl .sl{color:var(--red); background:rgba(246,70,93,0.13);}
 .trade-actions{display:flex; gap:10px; margin-top:auto;}
 .trade-actions .btn{flex:1; justify-content:center; padding:14px 0; font-size:14.5px; font-weight:800; letter-spacing:.3px;}
 .buy-btn{background:linear-gradient(135deg,#2fe0a2,var(--green)); color:#0d3324;}
@@ -1908,11 +1998,30 @@ button.quick-tile:focus-visible{outline:2px solid var(--accent); outline-offset:
             <div class="order-summary">
               
               
-              <div class="order-row"><span>Pozisyon Değeri (Nominal)</span><span class="mono" id="order-value">--</span></div>
-              
-              <div class="order-row"><span>Alım Gücünüz</span><span class="mono" id="order-buying-power">--</span></div>
-              <div class="order-note" id="order-lev-note" hidden>İşlem tutarı <b id="order-lev-note-lot"></b> ,bakiyenizden tahsil edilecektir. <b id="order-lev-note-eff">edilir.</b> </div>
-              <div class="order-note" id="order-insufficient-note" hidden style="color:var(--red); font-weight:600;">Bu miktar alım gücünüzü aşıyor.</div>
+              <div class="order-row"><span>Fiyat</span><span class="mono" id="order-value">--</span></div>
+              <div class="order-row"><span>Gereken Teminat</span><span class="mono" id="order-margin">--</span></div>
+              <div class="order-note" id="order-insufficient-note" hidden style="color:var(--red); font-weight:600;">Yetersiz bakiye. Kullanılabilir: <span id="order-buying-power">--</span></div>
+            </div>
+
+            <div class="tpsl-box" id="tpsl-box">
+              <div class="tpsl-head">
+                <div class="tpsl-title"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>TP / SL<span class="tpsl-rr" id="tpsl-rr"></span></div>
+              </div>
+              <div class="tpsl-ref" id="tpsl-ref"></div>
+              <div class="tpsl-row tp" id="tp-cell">
+                <div class="tpsl-line"><div class="tpsl-lab"><i></i>Kâr Al</div>
+                  <div class="tpsl-field"><input type="text" id="tp-input" inputmode="decimal" placeholder="İsteğe bağlı" autocomplete="off"><button type="button" class="tpsl-x" data-for="tp" aria-label="Temizle">×</button><em class="tpsl-unit">--</em></div></div>
+                <div class="tpsl-hint" id="tp-hint"></div>
+              </div>
+              <div class="tpsl-row sl" id="sl-cell">
+                <div class="tpsl-line"><div class="tpsl-lab"><i></i>Zarar Durdur</div>
+                  <div class="tpsl-field"><input type="text" id="sl-input" inputmode="decimal" placeholder="İsteğe bağlı" autocomplete="off"><button type="button" class="tpsl-x" data-for="sl" aria-label="Temizle">×</button><em class="tpsl-unit">--</em></div></div>
+                <div class="tpsl-hint" id="sl-hint"></div>
+              </div>
+              <div class="tpsl-bar" id="tpsl-bar" hidden>
+                <div class="tpsl-bar-track"><span class="r" id="bar-r"></span><span class="g" id="bar-g"></span></div>
+                <div class="tpsl-bar-lab"><span class="r" id="bar-r-t"></span><span class="g" id="bar-g-t"></span></div>
+              </div>
             </div>
 
             <div class="trade-actions">
@@ -2528,6 +2637,10 @@ button.quick-tile:focus-visible{outline:2px solid var(--accent); outline-offset:
 </div>
 
 <!-- ================= SUCCESS MODAL ================= -->
+<div id="trade-detail-modal">
+  <div class="td-card" id="td-card"></div>
+</div>
+
 <div id="success-modal">
   <div class="success-modal-card">
     <div class="success-icon"><svg class="icon" viewBox="0 0 24 24" style="width:26px;height:26px;stroke:#0d3324;"><polyline points="20 6 9 17 4 12"/></svg></div>
@@ -2631,12 +2744,14 @@ async function loadUserData(){
     positions: (data.positions || []).map(x=>({
       id:x.id, symDisplay:x.sym_display, color:x.color, side:x.side, qty:Number(x.qty), qtyLabel:x.qty_label,
       entry:Number(x.entry), cat:x.cat, tickerSym:x.ticker_sym, currency:x.currency, adminAdjusted:!!x.admin_adjusted,
-      override:(x.price_override==null ? null : Number(x.price_override))
+      override:(x.price_override==null ? null : Number(x.price_override)),
+      tp:(x.take_profit==null ? null : Number(x.take_profit)), sl:(x.stop_loss==null ? null : Number(x.stop_loss))
     })),
     closedPositions: (data.closed_positions || []).map(x=>({
       id:x.id, symDisplay:x.sym_display, color:x.color, side:x.side, qty:Number(x.qty), qtyLabel:x.qty_label,
       entry:Number(x.entry), exit:Number(x.exit), pl:Number(x.pl), cat:x.cat, tickerSym:x.ticker_sym,
-      currency:x.currency, closedDate:trDate(x.closed_at), adminAdjusted:!!x.admin_adjusted
+      currency:x.currency, closedDate:trDate(x.closed_at), adminAdjusted:!!x.admin_adjusted,
+      openedAtRaw:x.opened_at||null, closedAtRaw:x.closed_at||null
     })),
     recentTx: tx.map(t=>({label:t.label, amount:t.amount_text, up:t.up, date:trDate(t.created_at)})),
     kycStatus: p.kyc_status || 'Doğrulanmadı',
@@ -2657,13 +2772,16 @@ async function refreshUserData(){
 const ERR_MAP = {
   insufficient_spot: 'Yetersiz Spot bakiye.',
   insufficient_futures: 'Yetersiz Vadeli İşlemler bakiyesi.',
-  insufficient_balance: 'Bakiyeniz bu işlem için yetersiz. Toplam alım gücünüzü (Spot + Vadeli) aşan bir miktar giremezsiniz.',
+  insufficient_balance: 'Bakiyeniz bu işlem için yetersiz. Spot bakiyenizi aşan bir teminat gerektiren işlem açamazsınız.',
   fx_unavailable: 'Güncel döviz kuru alınamadı, bu yüzden işlem güvenlik amacıyla reddedildi. Birkaç saniye sonra tekrar deneyin.',
   invalid_amount: 'Geçerli bir tutar girin.',
   max_positions: 'En fazla 100 açık pozisyon tutabilirsiniz.',
   position_not_found: 'Kayıt bulunamadı (zaten işlem görmüş olabilir).',
   not_authenticated: 'Oturumunuz sona ermiş, lütfen tekrar giriş yapın.',
   invalid_input: 'Geçersiz işlem bilgisi.',
+  tp_sl_invalid: 'Kâr Al / Zarar Durdur seviyeleri pozisyon yönüyle uyumlu değil.',
+  tp_sl_not_reached: 'Seviye henüz tetiklenmedi.',
+  price_unavailable: 'Güncel fiyat doğrulanamadı.',
   no_permission: 'Bu işlem için yetkiniz yok.',
   user_not_found: 'Bu e-posta ile kayıtlı kullanıcı bulunamadı.',
   request_not_pending: 'Talep zaten sonuçlandırılmış.',
@@ -3366,6 +3484,30 @@ async function loadRealMarketData(){
 
 /* Her ~2.2 sn: AÇIK piyasalarda fiyat, çapa (son çekilen veri) etrafında makas içinde oynar.
    KAPALI piyasalarda fiyat çapada sabit kalır ve grafiğe yeni nokta eklenmez; piyasa açılınca hareket yeniden başlar. */
+/* TP/SL izleyici: canlı fiyat seviyeye değince sunucuya bildirir; sunucu fiyatı doğrular ve pozisyonu SEVİYE fiyatından kapatır */
+const tpslBusy = {};
+async function checkTpSl(){
+  if(!currentUid) return;
+  const u = cu(); if(!u || !u.positions) return;
+  for(const p of u.positions){
+    if(!(p.tp || p.sl) || p.override > 0) continue;
+    const t = tpslBusy[p.id]; if(t && Date.now() - t < 30000) continue;       // aynı pozisyon için 30 sn bekleme
+    if(!isMarketOpenFor(p.cat, p.tickerSym)) continue;
+    const cur = getLivePrice(p);
+    const long = p.side==='Long';
+    let kind = null;
+    if(p.tp && (long ? cur >= p.tp : cur <= p.tp)) kind = 'tp';
+    else if(p.sl && (long ? cur <= p.sl : cur >= p.sl)) kind = 'sl';
+    if(!kind) continue;
+    tpslBusy[p.id] = Date.now();
+    try{
+      const { error } = await sb.rpc('tp_sl_close', { p_id: p.id, p_kind: kind, p_price: cur });
+      if(error) throw error;
+      await refreshUserData();
+      showToast(p.symDisplay + (kind==='tp' ? ' · TP noktanıza ulaşıldı, pozisyon kapandı' : ' · SL noktanıza ulaşıldı, pozisyon kapandı'), kind==='tp' ? 'ok' : 'err');
+    }catch(e){ console.warn('tp_sl_close', e); }
+  }
+}
 function tickMarket(){
   const memo = {};                                   // her tick'te borsa başına tek kez açık/kapalı hesapla
   const isOpen = (cat, sym)=>{
@@ -3383,6 +3525,7 @@ function tickMarket(){
   });
   renderMarket();
   renderAccountWidgets();
+  checkTpSl();
   /* "Hesabım" sayfasının üst başlığındaki Toplam Varlık / Açık K/Z kutusu (topbar-left)
      sadece sayfaya geçilen anda hesaplanıyordu; bu yüzden ekranda kalırken donuk görünüyordu.
      Sayfa hâlâ açıksa her tick'te yeniden çiziyoruz — bu küçük bir etiket bloğu, içinde
@@ -3736,6 +3879,7 @@ function renderPosCard(r){
       <div><span>Güncel</span>${fmtPrice(r.cur)}</div>
       <div><span>Kar/Zarar</span><span class="${r.up?'up':'down'}">${r.up?'+':''}${r.plPct.toFixed(2)}%</span></div>
     </div>
+    ${(r.p.tp||r.p.sl) ? `<div class="pos-tpsl">${r.p.tp?`<span class="tp">TP ${fmtPrice(r.p.tp)} ${r.p.currency}</span>`:''}${r.p.sl?`<span class="sl">SL ${fmtPrice(r.p.sl)} ${r.p.currency}</span>`:''}</div>` : ''}
     <div class="pos-actions">
       <button class="btn btn-sm btn-close" data-close-id="${r.p.id}">${closeIcon}Kapat</button>
     </div>
@@ -3760,8 +3904,7 @@ function groupPositionsForDisplay(rowsHtml){
 function qtyNumFromLabel(qtyLabel){                           // unleveragedQtyLabel ile aynı hesap, ama toplanabilir sayı döner
   const m = String(qtyLabel||'').match(/^([0-9.]+)\s+(.+)$/);
   if(!m) return {num:0, unit:''};
-  const lev = myLeverage || 1;
-  return {num: lev>1 ? Number(m[1])/lev : Number(m[1]), unit: m[2]};
+  return {num: Number(m[1]), unit: m[2]};
 }
 
 const folderIcon = `<svg class="icon" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/></svg>`;
@@ -3883,7 +4026,7 @@ function renderAccountWidgets(){
     } else {
       closedList.innerHTML = u.closedPositions.map(c=>{
         const up = c.pl>=0;
-        return `<div class="closed-item">
+        return `<div class="closed-item" data-closed-id="${c.id}" role="button" tabindex="0">
           ${symBadge(c.tickerSym, c.cat)}
           <div class="closed-item-mid">
             <div class="closed-item-sym">${c.symDisplay}${adjBadge(c.adminAdjusted)}<span class="pos-side" style="color:${c.side==='Long'?'var(--green)':'var(--red)'};background:${c.side==='Long'?'rgba(34,207,148,0.13)':'rgba(246,70,93,0.13)'};">${c.side}</span></div>
@@ -3950,6 +4093,59 @@ document.querySelectorAll('.amount-quick button').forEach(btn=>{
 });
 
 let successModalNavigate = true;
+/* ===== Kapanan işlem detayı ===== */
+function tdCurve(up){
+  const y0 = up ? 30 : 8, y1 = up ? 8 : 30;                      // kârda yükselen, zararda alçalan eğri
+  const d = 'M0,' + y0 + ' C45,' + y0 + ' 55,' + y1 + ' 100,' + y1;
+  const t0 = (y0/38*100).toFixed(1), t1 = (y1/38*100).toFixed(1);
+  return '<svg viewBox="0 0 100 38" preserveAspectRatio="none" aria-hidden="true"><defs>' +
+    '<linearGradient id="tdg" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="currentColor" stop-opacity=".25"/><stop offset="1" stop-color="currentColor"/></linearGradient>' +
+    '<linearGradient id="tda" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="currentColor" stop-opacity=".22"/><stop offset="1" stop-color="currentColor" stop-opacity="0"/></linearGradient></defs>' +
+    '<path class="ar" d="' + d + ' L100,38 L0,38 Z"/><path class="cv" d="' + d + '"/></svg>' +
+    '<i class="td-dot s" style="top:' + t0 + '%"></i><i class="td-dot e" style="top:' + t1 + '%"></i>';
+}
+function tdDuration(a, b){
+  if(!a || !b) return '—';
+  const ms = new Date(b) - new Date(a);
+  if(!(ms >= 0)) return '—';
+  const m = Math.floor(ms/60000), d = Math.floor(m/1440), h = Math.floor((m%1440)/60), mm = m%60;
+  if(d) return d + ' gün ' + h + ' sa';
+  if(h) return h + ' sa ' + mm + ' dk';
+  return Math.max(mm,1) + ' dk';
+}
+function openTradeDetail(id){
+  const u = cu(); if(!u) return;
+  const c = u.closedPositions.find(x=>String(x.id)===String(id)); if(!c) return;
+  const up = c.pl >= 0, long = c.side === 'Long';
+  const plDisp = plInDispCur(c.pl, c.currency);
+  const sideStyle = long ? 'color:var(--green);background:rgba(34,207,148,0.13);' : 'color:var(--red);background:rgba(246,70,93,0.13);';
+  const cell = (lab, val, wide) => '<div class="td-cell' + (wide ? ' wide' : '') + '"><small>' + lab + '</small><b>' + val + '</b></div>';
+  document.getElementById('td-card').innerHTML =
+    '<div class="td-head">' + symBadge(c.tickerSym, c.cat, 40) +
+      '<div class="td-head-mid"><div class="td-sym">' + c.symDisplay + '<span class="pos-side" style="' + sideStyle + '">' + c.side + '</span></div>' +
+      '<div class="td-sub">' + c.qtyLabel + '</div></div>' +
+      '<button class="td-x" id="td-x" aria-label="Kapat"><svg class="icon" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>' +
+    '<div class="td-hero ' + (up ? 'up' : 'down') + '">' +
+      '<div class="td-hero-lab">' + (up ? 'Gerçekleşen Kâr' : 'Gerçekleşen Zarar') + '</div>' +
+      '<div class="td-hero-val mono">' + (up ? '+' : '') + fmtMoney(plDisp) + ' ' + dispCur() + '</div>' +
+      '<div class="td-path ' + (up ? 'up' : 'down') + '">' +
+        '<div class="td-node"><small>Giriş</small><b class="mono">' + fmtPrice(c.entry) + ' ' + c.currency + '</b></div>' +
+        '<div class="td-line">' + tdCurve(up) + '</div>' +
+        '<div class="td-node r"><small>Çıkış</small><b class="mono">' + fmtPrice(c.exit) + ' ' + c.currency + '</b></div></div>' +
+      '<div class="td-dates"><div><small>Açılış</small><b>' + (c.openedAtRaw ? trDate(c.openedAtRaw) : '—') + '</b></div>' +
+        '<div class="r"><small>Kapanış</small><b>' + (c.closedAtRaw ? trDate(c.closedAtRaw) : c.closedDate) + '</b></div></div>' +
+    '</div>';
+  document.getElementById('trade-detail-modal').classList.add('open');
+  document.getElementById('td-x').addEventListener('click', closeTradeDetail);
+}
+function closeTradeDetail(){ document.getElementById('trade-detail-modal').classList.remove('open'); }
+document.getElementById('trade-detail-modal').addEventListener('click', e=>{ if(e.target.id === 'trade-detail-modal') closeTradeDetail(); });
+document.addEventListener('keydown', e=>{ if(e.key === 'Escape') closeTradeDetail(); });
+document.addEventListener('click', e=>{
+  const it = e.target.closest('.closed-item[data-closed-id]');
+  if(it) openTradeDetail(it.dataset.closedId);
+});
+
 function showResultModal(type, title, desc, navigateOnClose){
   successModalNavigate = navigateOnClose!==false;
   const icon = document.querySelector('#success-modal .success-icon');
@@ -4464,11 +4660,7 @@ let chartLastStep = 0;      // son noktanın eklendiği an (ms)
 function unleveragedQtyLabel(qtyLabel){                       // gösterimde kaldıraçsız (yazılan) lotu geri çıkarır
   const m = String(qtyLabel||'').match(/^([0-9.]+)\s+(.+)$/);
   if(!m) return qtyLabel;
-  const lev = myLeverage || 1;
-  if(lev <= 1) return qtyLabel;
-  const base = Number(m[1]) / lev;
-  const num = Number.isInteger(base) ? String(base) : String(Math.round(base * 1e8) / 1e8);
-  return num + ' ' + m[2];
+  return qtyLabel;
 }
 function plToTry(pl, curr){ return curr==='TRY' ? pl : pl * fxRate(); }   // pozisyonun kendi para biriminden TL'ye
 function plInDispCur(pl, curr){                                // pozisyonun kendi para biriminden görüntüleme para birimine çevirir
@@ -4490,6 +4682,7 @@ function openTrade(cat, item){
     currency: currencyFor(cat)
   };
   document.getElementById('lot-input').value = '1';
+  ['tp-input','sl-input'].forEach(id=>{ const e=document.getElementById(id); if(e) e.value=''; });
   currentTimeframe = '1G';
   document.querySelectorAll('#tf-tabs .tf-btn').forEach(b=>b.classList.toggle('active', b.dataset.tf==='1G'));
   chartData = [];                    // önceki sembolün grafiği bir an bile görünmesin
@@ -4659,46 +4852,128 @@ function renderTradeHeader(){
   }
 }
 
+/* ===== TP / SL ===== */
+let tpslMode = 'price';                       // yalnızca fiyat girişi
+function parseNum(v){ const n = parseFloat(String(v||'').trim().replace(',', '.')); return isFinite(n) && n > 0 ? n : null; }
+// Kullanıcı seçtiği para biriminde girer; sunucuya enstrümanın kendi para biriminde gider
+function dispToNative(v, cur){
+  const tryVal = dispCur()==='TRY' ? v : v * fxRate();
+  return cur==='TRY' ? tryVal : tryVal / fxRate();
+}
+function nativeToDisp(v, cur){ return toDisp(cur==='TRY' ? v : v * fxRate()); }
+function updateTpSlHints(){
+  if(!currentTrade) return;
+  const item = (marketData[currentTrade.cat]||[]).find(x=>x.sym===currentTrade.tickerSym);
+  if(!item) return;
+  const cur = dispCur();                                   // hesap para birimi (kâr/zarar tutarları için)
+  const nat = currentTrade.currency;                       // enstrümanın fiyat para birimi (seviyeler için)
+  const refD = item.price;                                 // referans fiyat: enstrümanın kendi para biriminde
+  const lot = parseNum(document.getElementById('lot-input').value) || 0;
+  const box = document.getElementById('tpsl-box');
+  box.classList.toggle('pct', tpslMode==='pct');
+  box.querySelectorAll('.tpsl-mode button').forEach(b=>b.classList.toggle('on', b.dataset.mode===tpslMode));
+  box.querySelectorAll('.tpsl-unit').forEach(e=>e.textContent = tpslMode==='pct' ? '%' : nat);
+  document.getElementById('tpsl-ref').innerHTML = '<span>Güncel fiyat</span><b>' + fmtPrice(refD) + ' ' + nat + '</b>';
+  const dist = {}, amts = {};
+  ['tp','sl'].forEach(k=>{
+    document.querySelector('#' + k + '-cell .tpsl-field').classList.toggle('has', !!document.getElementById(k+'-input').value.trim());
+    const v = parseNum(document.getElementById(k+'-input').value);
+    const hint = document.getElementById(k+'-hint');
+    document.getElementById(k+'-cell').classList.remove('bad');
+    if(!v){ hint.innerHTML = ''; dist[k] = null; return; }
+    const pct = tpslMode==='pct' ? v : Math.abs(v/refD - 1) * 100;
+    dist[k] = pct;
+    const amt = nativeToDisp(refD * pct / 100 * lot, nat);       // seviyeye değince oluşacak kâr / zarar, hesap para biriminde
+    amts[k] = amt;
+    let right;
+    if(tpslMode==='pct'){
+      const up = refD*(1+pct/100), dn = refD*(1-pct/100);
+      right = '<span>AL ' + fmtPrice(k==='tp' ? up : dn) + ' · SAT ' + fmtPrice(k==='tp' ? dn : up) + '</span>';
+    } else {
+      const sg = (v/refD - 1) * 100;
+      right = '<span>' + (sg >= 0 ? '+' : '') + sg.toFixed(2) + '% fiyattan</span>';
+    }
+    hint.innerHTML = '<b class="' + k + '">≈ ' + (k==='tp' ? '+' : '−') + fmtMoney(amt) + ' ' + cur + '</b>' + right;
+  });
+  const bar = document.getElementById('tpsl-bar');
+  if(dist.tp && dist.sl){
+    bar.hidden = false;
+    document.getElementById('bar-r').style.flexGrow = dist.sl;
+    document.getElementById('bar-g').style.flexGrow = dist.tp;
+    document.getElementById('bar-r-t').textContent = 'Risk −' + fmtMoney(amts.sl) + ' ' + cur;
+    document.getElementById('bar-g-t').textContent = 'Getiri +' + fmtMoney(amts.tp) + ' ' + cur;
+  } else bar.hidden = true;
+  const rr = document.getElementById('tpsl-rr');
+  rr.textContent = (dist.tp && dist.sl) ? 'R/R 1 : ' + (dist.tp/dist.sl).toLocaleString('tr-TR', {maximumFractionDigits:2}) : '';
+}
+['tp-input','sl-input'].forEach(id=>document.getElementById(id).addEventListener('input', updateTpSlHints));
+document.querySelectorAll('.tpsl-mode button').forEach(b=>b.addEventListener('click', ()=>{
+  tpslMode = b.dataset.mode;
+  try{ localStorage.setItem('kx_tpsl_mode', tpslMode); }catch(_){}
+  ['tp-input','sl-input'].forEach(id=>document.getElementById(id).value = '');   // birim değişti, eski değerler anlamsız
+  updateTpSlHints();
+}));
+document.querySelectorAll('.tpsl-x').forEach(b=>b.addEventListener('click', ()=>{
+  document.getElementById(b.dataset.for + '-input').value = '';
+  updateTpSlHints();
+}));
+document.querySelectorAll('.tpsl-chips').forEach(c=>c.addEventListener('click', e=>{
+  const b = e.target.closest('button[data-v]'); if(!b) return;
+  document.getElementById(c.dataset.for + '-input').value = b.dataset.v;
+  updateTpSlHints();
+}));
+/* AL/SAT'a basılınca girilen TP/SL'yi enstrümanın kendi para birimindeki fiyat seviyelerine çevirir ve yöne göre doğrular */
+function readTpSl(isBuy, refN, cur){
+  const tpRaw = document.getElementById('tp-input').value.trim(), slRaw = document.getElementById('sl-input').value.trim();
+  const tpV = parseNum(tpRaw), slV = parseNum(slRaw);
+  if((tpRaw && !tpV) || (slRaw && !slV)) return {err:{title:'Geçersiz Değer', msg:'Kâr Al / Zarar Durdur için geçerli bir değer girin ya da boş bırakın.'}, cell:(tpRaw && !tpV) ? 'tp-cell' : 'sl-cell'};
+  let tpN = null, slN = null;
+  if(tpslMode==='pct'){
+    if(tpV) tpN = refN * (1 + (isBuy ? 1 : -1) * tpV/100);
+    if(slV) slN = refN * (1 + (isBuy ? -1 : 1) * slV/100);
+    if(tpN !== null && tpN <= 0) return {err:{title:'Kâr Al Seviyesi Hatalı', msg:'Yüzde çok büyük, fiyat sıfırın altına iniyor.'}, cell:'tp-cell'};
+    if(slN !== null && slN <= 0) return {err:{title:'Zarar Durdur Seviyesi Hatalı', msg:'Yüzde çok büyük, fiyat sıfırın altına iniyor.'}, cell:'sl-cell'};
+  } else {
+    if(tpV) tpN = tpV;                                        // zaten enstrümanın para biriminde
+    if(slV) slN = slV;
+  }
+  if(tpN !== null) tpN = Math.round(tpN*1e6)/1e6;
+  if(slN !== null) slN = Math.round(slN*1e6)/1e6;
+  if(tpN && (isBuy ? tpN <= refN : tpN >= refN)) return {err:{title:'Kâr Al Seviyesi Hatalı', msg: isBuy ? 'AL işleminde Kâr Al fiyatı güncel fiyatın ÜSTÜNDE olmalı.' : 'SAT işleminde Kâr Al fiyatı güncel fiyatın ALTINDA olmalı.'}, cell:'tp-cell'};
+  if(slN && (isBuy ? slN >= refN : slN <= refN)) return {err:{title:'Zarar Durdur Seviyesi Hatalı', msg: isBuy ? 'AL işleminde Zarar Durdur fiyatı güncel fiyatın ALTINDA olmalı.' : 'SAT işleminde Zarar Durdur fiyatı güncel fiyatın ÜSTÜNDE olmalı.'}, cell:'sl-cell'};
+  return {tpN, slN};
+}
+
 function updateOrderSummary(){
+  try{ updateTpSlHints(); }catch(_){}
   if(!currentTrade) return;
   const item = marketData[currentTrade.cat].find(x=>x.sym===currentTrade.tickerSym);
   const price = item ? item.price : 0;
   const lot = parseFloat(document.getElementById('lot-input').value) || 0;
   const lev = myLeverage || 1;
-  const eff = Math.round(lot * lev * 1e8) / 1e8;
   const unit = currentTrade.cat==='crypto' ? currentTrade.tickerSym : 'Lot';
   const levEl = document.getElementById('order-lev');
   if(levEl){ levEl.textContent = '×' + lev; levEl.classList.toggle('hi', lev > 50); }
   const sizeEl = document.getElementById('order-size');
  if(sizeEl) sizeEl.textContent = lot + ' ' + unit;
-  const note = document.getElementById('order-lev-note');
-if(note){
-    note.hidden = !(lev > 1);
-    if(lev > 1){
-        const lotEl = document.getElementById('order-lev-note-lot');
-        if(lotEl) lotEl.textContent = lot + ' ' + unit;
-        
-        const effEl = document.getElementById('order-lev-note-eff');
-        if(effEl) effEl.textContent = '';
-    }
-}
- document.getElementById('order-value').textContent = fmtPrice(price)+' '+currentTrade.currency;
 
   /* Gereken marj = fiyat × girilen (kaldıraçsız) lot — sunucudaki open_position ile aynı hesap.
-     Alım gücü = Spot + Vadeli toplamı (marj zaten açık pozisyonlarda kilitli olduğundan,
+     Alım gücü = Spot bakiye (marj zaten açık pozisyonlarda kilitli olduğundan,
      güncel bakiye zaten "kullanılabilir" tutardır, ayrıca çıkarma yapmaya gerek yok). */
   /* Gereken marj = fiyat × girilen (kaldıraçsız) lot — pozisyonun KENDİ para biriminde (USD/USDT/TRY).
      Bakiye (Spot+Vadeli) her zaman TL olarak tutulur, bu yüzden USD/USDT işlemlerinde marjı
      karşılaştırmadan önce güncel kurla TL'ye çevirmek ZORUNLU — yoksa "4200" ile "49000" ham sayı
      olarak kıyaslanır ve kur farkı yüzünden yanlış sonuç çıkar. */
   const u = currentUid ? cu() : null;
-  const buyingPowerTry = u ? (u.balance + u.futuresBalance) : 0;
-  const marginNative = price * lot;
+  const buyingPowerTry = u ? u.balance : 0;                 // işlemler yalnızca Spot bakiyeden açılır
+  const nominalNative = price * lot;                          // pozisyon değeri (kaldıraçsız, düz fiyat × lot)
+  const marginNative = nominalNative / lev;                   // bakiyeden ayrılacak teminat = nominal ÷ kaldıraç
   const marginTry = currentTrade.currency === 'TRY' ? marginNative : marginNative * fxRate();
+  const valEl = document.getElementById('order-value');
+  if(valEl) valEl.textContent = fmtPrice(price) + ' ' + currentTrade.currency;   // birim fiyat: lotla değişmez, enstrümanın kendi para biriminde (TL hisse = TL)
   const marginEl = document.getElementById('order-margin');
   const bpEl = document.getElementById('order-buying-power');
-  if(marginEl) marginEl.textContent = fmtPrice(marginNative) + ' ' + currentTrade.currency
-    + (currentTrade.currency !== 'TRY' ? ' (≈' + fmtPrice(marginTry) + ' TRY)' : '');
+  if(marginEl) marginEl.textContent = cashText(marginTry);
   if(bpEl) bpEl.textContent = cashText(buyingPowerTry);   // kullanıcının seçtiği para birimi (USD / USDT / TRY)
   const insufficient = lot > 0 && marginTry > buyingPowerTry + 0.5;
   const insufNote = document.getElementById('order-insufficient-note');
@@ -4768,7 +5043,10 @@ async function executeTrade(side){
   tradeBusy = true;
   try{
     const lev = await fetchMyLeverage();                          // CRM'den ayarlanan güncel kaldıraç
-    const effQty = Math.round(lot * lev * 1e8) / 1e8;
+    const tps = readTpSl(side==='buy', item.price, currentTrade.currency);
+    if(tps.err){ if(tps.cell) document.getElementById(tps.cell).classList.add('bad'); showErrorModal(tps.err.title, tps.err.msg); return; }
+    const tpN = tps.tpN, slN = tps.slN;
+    const effQty = Math.round(lot * 1e8) / 1e8;                  // yazılan lot = pozisyon büyüklüğü; teminat sunucuda ÷ kaldıraç
     const { error } = await sb.rpc('open_position', {
       p_cat: currentTrade.cat,
       p_ticker: currentTrade.tickerSym,
@@ -4778,7 +5056,9 @@ async function executeTrade(side){
       p_qty: effQty,
       p_qty_label: effQty+' '+unitLabel,   // sunucu bu alanı sıkı bir kalıpla doğruluyor: yalnızca "sayı birim" (parantez/× kabul etmiyor)
       p_entry: item.price,
-      p_currency: currentTrade.currency
+      p_currency: currentTrade.currency,
+      p_take_profit: tpN,
+      p_stop_loss: slN
     });
     if(error) throw error;
     await refreshUserData();
