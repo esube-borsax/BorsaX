@@ -549,7 +549,7 @@ svg{display:block;}
 .td-sub{font-size:11.5px; color:var(--text-dim); margin-top:3px;}
 .td-x{width:32px; height:32px; border-radius:10px; border:1px solid var(--border-soft); background:var(--bg); color:var(--text-dim); display:flex; align-items:center; justify-content:center; cursor:pointer; flex:none;}
 .td-x:hover{color:var(--text);} .td-x .icon{width:15px; height:15px;}
-.td-hero{margin:14px 18px 18px; padding:16px 18px 14px; border-radius:16px; text-align:center; border:1px solid var(--border-soft);}
+.td-hero{margin:14px 18px 12px; padding:16px 18px 14px; border-radius:16px; text-align:center; border:1px solid var(--border-soft);}
 .td-hero.up{background:radial-gradient(120% 140% at 50% 0%, rgba(34,207,148,0.16), rgba(34,207,148,0.02) 70%), var(--bg);}
 .td-hero.down{background:radial-gradient(120% 140% at 50% 0%, rgba(246,70,93,0.16), rgba(246,70,93,0.02) 70%), var(--bg);}
 .td-hero-lab{font-size:11px; font-weight:700; letter-spacing:.6px; color:var(--text-dim); text-transform:uppercase;}
@@ -572,9 +572,14 @@ svg{display:block;}
 .td-dot.e::after{content:''; position:absolute; inset:-5px; border-radius:50%; border:1.5px solid currentColor; opacity:.55; animation:tdPing 1.8s ease-out infinite;}
 @keyframes tdPing{0%{transform:scale(.6); opacity:.7;} 100%{transform:scale(1.9); opacity:0;}}
 .td-path.up .td-line{color:var(--green);} .td-path.down .td-line{color:var(--red);}
+.td-save{display:flex; align-items:center; justify-content:center; gap:8px; width:calc(100% - 36px); margin:0 18px 18px; height:42px; border-radius:12px; border:1px solid var(--border); background:var(--bg); color:var(--text); font-size:13px; font-weight:700; cursor:pointer; transition:border-color .15s, color .15s, background .15s;}
+.td-save:hover{border-color:var(--accent); color:var(--accent);}
+.td-save:disabled{opacity:.6; cursor:default;}
+.td-save .icon{width:16px; height:16px;}
 .td-hero .td-path{margin:14px 0 0; padding:14px 0 0; background:transparent; border:none; border-top:1px solid rgba(255,255,255,0.09); border-radius:0; text-align:left;}
 .td-dates{display:flex; justify-content:space-between; gap:10px; margin-top:12px; padding-top:11px; border-top:1px dashed rgba(255,255,255,0.09); text-align:left;}
 .td-dates .r{text-align:right;}
+.td-dates.one{justify-content:center; text-align:center;}
 .td-dates small{display:block; font-size:9.5px; font-weight:700; letter-spacing:.5px; color:var(--text-dim); text-transform:uppercase; margin-bottom:2px;}
 .td-dates b{font-size:11px; font-weight:600; color:var(--text); opacity:.85; font-variant-numeric:tabular-nums;}
 .td-grid{display:grid; grid-template-columns:1fr 1fr; gap:8px; padding:10px 18px 16px;}
@@ -4094,6 +4099,92 @@ document.querySelectorAll('.amount-quick button').forEach(btn=>{
 
 let successModalNavigate = true;
 /* ===== Kapanan işlem detayı ===== */
+/* ===== İşlem görselini PNG olarak kaydet (canvas ile çizilir, dış kütüphane gerekmez) ===== */
+let tdCurrent = null;
+function tdRoundRect(ctx, x, y, w, h, r){
+  ctx.beginPath(); ctx.moveTo(x+r, y);
+  ctx.arcTo(x+w, y, x+w, y+h, r); ctx.arcTo(x+w, y+h, x, y+h, r);
+  ctx.arcTo(x, y+h, x, y, r); ctx.arcTo(x, y, x+w, y, r); ctx.closePath();
+}
+async function tdRender(c){
+  const css = getComputedStyle(document.documentElement);
+  const v = n => css.getPropertyValue(n).trim();
+  const font = getComputedStyle(document.body).fontFamily || 'Inter, system-ui, sans-serif';
+  try{ await Promise.all(['800 40px','700 20px','600 12px'].map(f=>document.fonts.load(f + ' Inter'))); }catch(_){}
+  const up = c.pl >= 0, long = c.side === 'Long';
+  const col = up ? v('--green') : v('--red');
+  const W = 460, H = 364, S = 3;
+  const cv = document.createElement('canvas'); cv.width = W*S; cv.height = H*S;
+  const x = cv.getContext('2d'); x.scale(S, S);
+  const T = (txt, px, py, o={}) => {
+    x.font = (o.w||'600') + ' ' + (o.s||12) + 'px ' + font; x.fillStyle = o.c || v('--text');
+    x.textAlign = o.a || 'left'; x.textBaseline = 'alphabetic';
+    try{ x.letterSpacing = (o.ls||0) + 'px'; }catch(_){}
+    x.fillText(txt, px, py);
+  };
+  // zemin
+  tdRoundRect(x, 0, 0, W, H, 26); x.fillStyle = v('--card'); x.fill();
+  x.save(); tdRoundRect(x, 0, 0, W, H, 26); x.clip();
+  // başlık
+  T(c.symDisplay, 28, 50, {w:'800', s:24});
+  x.font = '800 24px ' + font; const nw = x.measureText(c.symDisplay).width;
+  const sc = long ? v('--green') : v('--red'), pw = x.measureText(c.side).width; // yalnızca ölçüm için
+  x.font = '700 12px ' + font; const sw = x.measureText(c.side).width + 20;
+  tdRoundRect(x, 28 + nw + 12, 31, sw, 24, 8); x.fillStyle = long ? 'rgba(34,207,148,0.15)' : 'rgba(246,70,93,0.15)'; x.fill();
+  T(c.side, 28 + nw + 12 + sw/2, 48, {w:'700', s:12, c:sc, a:'center'});
+  T(c.qtyLabel, 28, 72, {s:13, c:v('--text-dim')});
+  T('BorsaX', W-28, 50, {w:'800', s:16, a:'right', c:v('--text-dim')});
+  // kâr/zarar kartı
+  const hx = 18, hy = 92, hw = W-36, hh = H-92-18;
+  tdRoundRect(x, hx, hy, hw, hh, 18);
+  const g = x.createRadialGradient(W/2, hy, 0, W/2, hy, hw*0.75);
+  g.addColorStop(0, up ? 'rgba(34,207,148,0.20)' : 'rgba(246,70,93,0.20)'); g.addColorStop(1, 'rgba(0,0,0,0)');
+  x.fillStyle = v('--bg'); x.fill(); x.fillStyle = g; x.fill();
+  x.strokeStyle = 'rgba(255,255,255,0.07)'; x.lineWidth = 1; x.stroke();
+  T(up ? 'GERÇEKLEŞEN KÂR' : 'GERÇEKLEŞEN ZARAR', W/2, hy+34, {w:'700', s:11, c:v('--text-dim'), a:'center', ls:1.2});
+  T((up?'+':'') + fmtMoney(plInDispCur(c.pl, c.currency)) + ' ' + dispCur(), W/2, hy+82, {w:'800', s:40, c:col, a:'center'});
+  x.strokeStyle = 'rgba(255,255,255,0.09)'; x.beginPath(); x.moveTo(hx+22, hy+108); x.lineTo(hx+hw-22, hy+108); x.stroke();
+  // giriş / çıkış
+  T('GİRİŞ', hx+22, hy+138, {w:'700', s:10.5, c:v('--text-dim'), ls:1});
+  T(fmtPrice(c.entry) + ' ' + c.currency, hx+22, hy+162, {w:'800', s:18, c:col});
+  T('ÇIKIŞ', hx+hw-22, hy+138, {w:'700', s:10.5, c:v('--text-dim'), a:'right', ls:1});
+  T(fmtPrice(c.exit) + ' ' + c.currency, hx+hw-22, hy+162, {w:'800', s:18, c:col, a:'right'});
+  // eğri
+  const x0 = hx+hw*0.36, x1 = hx+hw*0.64, y0 = up ? hy+158 : hy+128, y1 = up ? hy+128 : hy+158;
+  const lg = x.createLinearGradient(x0, 0, x1, 0); lg.addColorStop(0, 'rgba(255,255,255,0.18)'); lg.addColorStop(1, col);
+  x.beginPath(); x.moveTo(x0, y0); x.bezierCurveTo(x0+(x1-x0)*0.45, y0, x0+(x1-x0)*0.55, y1, x1, y1);
+  x.lineWidth = 2.4; x.lineCap = 'round'; x.strokeStyle = lg; x.shadowColor = col; x.shadowBlur = 8; x.stroke(); x.shadowBlur = 0;
+  x.beginPath(); x.arc(x0, y0, 5, 0, Math.PI*2); x.fillStyle = v('--bg'); x.fill(); x.lineWidth = 2; x.strokeStyle = v('--text-dim'); x.stroke();
+  x.beginPath(); x.arc(x1, y1, 11, 0, Math.PI*2); x.strokeStyle = col; x.globalAlpha = .35; x.lineWidth = 1.5; x.stroke(); x.globalAlpha = 1;
+  x.beginPath(); x.arc(x1, y1, 5.5, 0, Math.PI*2); x.fillStyle = col; x.shadowColor = col; x.shadowBlur = 12; x.fill(); x.shadowBlur = 0;
+  // kapanış
+  x.setLineDash([4,4]); x.strokeStyle = 'rgba(255,255,255,0.10)'; x.beginPath(); x.moveTo(hx+22, hy+188); x.lineTo(hx+hw-22, hy+188); x.stroke(); x.setLineDash([]);
+  T('KAPANIŞ', W/2, hy+212, {w:'700', s:10, c:v('--text-dim'), a:'center', ls:1});
+  T(c.closedAtRaw ? trDate(c.closedAtRaw) : c.closedDate, W/2, hy+233, {w:'600', s:13, a:'center'});
+  x.restore();
+  return await new Promise(res => cv.toBlob(res, 'image/png'));
+}
+async function tdSaveImage(){
+  const c = tdCurrent, btn = document.getElementById('td-save'); if(!c || !btn) return;
+  btn.disabled = true;
+  try{
+    const blob = await tdRender(c);
+    if(!blob) throw new Error('görsel oluşturulamadı');
+    const name = (String(c.symDisplay).replace(/[^A-Za-z0-9._-]+/g, '_') || 'islem') + '-' + Date.now() + '.png';
+    const file = new File([blob], name, {type:'image/png'});
+    // Telefonda paylaşım menüsü ("Görüntüyü Kaydet" seçeneğiyle); bilgisayarda doğrudan indirme
+    if(window.matchMedia('(pointer:coarse)').matches && navigator.canShare && navigator.canShare({files:[file]})){
+      try{ await navigator.share({files:[file], title:c.symDisplay + ' işlem sonucu'}); return; }
+      catch(e){ if(e && e.name === 'AbortError') return; }
+    }
+    const url = URL.createObjectURL(blob), a = document.createElement('a');
+    a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url), 3000);
+    showToast('Görsel indirildi', 'ok');
+  }catch(e){
+    console.warn('tdSaveImage', e); showToast('Görsel oluşturulamadı', 'err');
+  }finally{ btn.disabled = false; }
+}
 function tdCurve(up){
   const y0 = up ? 30 : 8, y1 = up ? 8 : 30;                      // kârda yükselen, zararda alçalan eğri
   const d = 'M0,' + y0 + ' C45,' + y0 + ' 55,' + y1 + ' 100,' + y1;
@@ -4132,9 +4223,11 @@ function openTradeDetail(id){
         '<div class="td-node"><small>Giriş</small><b class="mono">' + fmtPrice(c.entry) + ' ' + c.currency + '</b></div>' +
         '<div class="td-line">' + tdCurve(up) + '</div>' +
         '<div class="td-node r"><small>Çıkış</small><b class="mono">' + fmtPrice(c.exit) + ' ' + c.currency + '</b></div></div>' +
-      '<div class="td-dates"><div><small>Açılış</small><b>' + (c.openedAtRaw ? trDate(c.openedAtRaw) : '—') + '</b></div>' +
-        '<div class="r"><small>Kapanış</small><b>' + (c.closedAtRaw ? trDate(c.closedAtRaw) : c.closedDate) + '</b></div></div>' +
-    '</div>';
+      '<div class="td-dates one"><div><small>Kapanış</small><b>' + (c.closedAtRaw ? trDate(c.closedAtRaw) : c.closedDate) + '</b></div></div>' +
+    '</div>' +
+    '<button type="button" class="td-save" id="td-save"><svg class="icon" viewBox="0 0 24 24"><path d="M12 3v12"/><polyline points="7 10 12 15 17 10"/><path d="M5 21h14"/></svg>Görseli Kaydet</button>';
+  tdCurrent = c;
+  document.getElementById('td-save').addEventListener('click', tdSaveImage);
   document.getElementById('trade-detail-modal').classList.add('open');
   document.getElementById('td-x').addEventListener('click', closeTradeDetail);
 }
@@ -5412,13 +5505,12 @@ document.getElementById('crm-nav-admins').addEventListener('click', ()=>{ if(can
 
 /* ----- Kaldıraç (CRM) ----- */
 let crmLev = { ok:false, value:1 };
-/* CRM'de lot gösterimi: veritabanında lot × kaldıraç saklanır; yöneticiye kullanıcının yazdığı lot gösterilir */
+/* CRM'de lot gösterimi: artık yazılan lot = saklanan miktar (kaldıraç sadece teminatı böler); site ile birebir aynı sayı gösterilir */
 function crmLevVal(){ return (crmLev && crmLev.ok && crmLev.value > 1) ? crmLev.value : 1; }
 function crmDispQty(qty){                                      // ham pozisyon miktarı -> kullanıcının girdiği lot
-  const base = Number(qty) / crmLevVal();
-  return Math.round(base * 1e8) / 1e8;
+  return Math.round(Number(qty) * 1e8) / 1e8;
 }
-function crmRawQty(lot){ return Math.round(Number(lot) * crmLevVal() * 1e8) / 1e8; }   // girilen lot -> saklanan miktar
+function crmRawQty(lot){ return Math.round(Number(lot) * 1e8) / 1e8; }   // girilen lot -> saklanan miktar
 function crmUnleveragedLabel(qtyLabel){                        // "100 Lot" -> "1 Lot"
   const m = String(qtyLabel||'').match(/^([0-9.]+)\s+(.+)$/);
   if(!m) return qtyLabel;
