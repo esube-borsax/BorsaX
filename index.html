@@ -991,8 +991,34 @@ textarea.sup-input{resize:vertical; min-height:130px; line-height:1.55;}
 .chart-live-dot{display:flex; align-items:center; gap:6px; font-size:11px; color:var(--text-dim); font-weight:600;}
 .chart-live-dot span{width:7px; height:7px; border-radius:50%; background:var(--green); box-shadow:0 0 0 3px rgba(34,207,148,0.18); animation:pulseDot 1.6s infinite;}
 @keyframes pulseDot{0%,100%{opacity:1;} 50%{opacity:.35;}}
-.chart-wrap{width:100%;}
-.chart-wrap svg{width:100%; height:290px;}
+.chart-wrap{width:100%; position:relative; padding-right:58px; touch-action:pan-y; cursor:crosshair; user-select:none; -webkit-user-select:none;}
+.chart-wrap svg{width:100%; height:290px; display:block;}
+.cv-plot{position:absolute; left:0; top:0; bottom:0; right:58px; pointer-events:none;}
+.cv-axis{position:absolute; right:0; top:0; bottom:0; width:58px; pointer-events:none;}
+.cv-ax{position:absolute; right:0; transform:translateY(-50%); font-size:10.5px; color:var(--text-dim); font-variant-numeric:tabular-nums; padding-left:8px; white-space:nowrap;}
+.cv-axtag{position:absolute; right:0; transform:translateY(-50%); font-size:10.5px; font-weight:800; padding:3px 6px; border-radius:5px; font-variant-numeric:tabular-nums; white-space:nowrap; color:#04130d;}
+.cv-axtag.down{color:#fff;}
+.cv-axtag.hov{background:var(--card-2); color:var(--text); border:1px solid var(--border);}
+.cv-lv{position:absolute; left:8px; transform:translateY(-50%); font-size:10px; font-weight:800; padding:2px 7px; border-radius:6px; white-space:nowrap; letter-spacing:.2px;}
+.cv-lv.entry{background:#3a3f55; color:#fff;}
+.cv-lv.tp{background:var(--green); color:#04130d;}
+.cv-lv.sl{background:var(--red); color:#fff;}
+.cv-lv.pv{background:rgba(20,23,36,0.9); border:1px dashed currentColor;}
+.cv-lv.pv.tp{color:var(--green);} .cv-lv.pv.sl{color:var(--red);}
+.cv-v{position:absolute; top:0; bottom:0; width:1px; background:rgba(255,255,255,0.28);}
+.cv-dot{position:absolute; width:10px; height:10px; margin:-5px 0 0 -5px; border-radius:50%; border:2px solid var(--bg); box-shadow:0 0 0 2px rgba(255,255,255,0.2);}
+.cv-tip{position:absolute; top:6px; padding:6px 10px; border-radius:10px; background:rgba(20,23,36,0.96); border:1px solid var(--border); font-size:11px; white-space:nowrap; line-height:1.35;}
+.cv-tip b{display:block; font-size:12.5px; font-weight:800;} .cv-tip span{color:var(--text-dim);}
+.chart-stats{display:flex; gap:22px; margin-top:12px; padding-top:12px; border-top:1px solid var(--border-soft);}
+.chart-stats small{display:block; font-size:10px; font-weight:700; letter-spacing:.5px; color:var(--text-dim); text-transform:uppercase; margin-bottom:3px;}
+.chart-stats b{font-size:13px; font-weight:700;}
+.chart-fs{width:30px; height:30px; border-radius:8px; background:var(--bg); border:1px solid var(--border-soft); color:var(--text-dim); display:flex; align-items:center; justify-content:center; margin-left:10px; cursor:pointer;}
+.chart-fs:hover{color:var(--text);} .chart-fs .icon{width:14px; height:14px;}
+.chart-fs .ic-close{display:none;} .trade-chart-card.fs .chart-fs .ic-open{display:none;} .trade-chart-card.fs .chart-fs .ic-close{display:block;}
+.trade-chart-card.fs{position:fixed; inset:0; z-index:400; border-radius:0; display:flex; flex-direction:column; padding:14px; background:var(--card);}
+.trade-chart-card.fs .chart-wrap{flex:1; min-height:0;}
+.trade-chart-card.fs .chart-wrap svg{height:100%;}
+@media (max-width:640px){ .chart-wrap{padding-right:50px;} .cv-plot{right:50px;} .cv-axis{width:50px;} .chart-stats{gap:16px;} }
 .trade-ticket{display:flex; flex-direction:column;}
 .ticket-block{margin-bottom:18px;}
 .ticket-row-label{font-size:11.5px; color:var(--text-dim); font-weight:600; margin-bottom:9px;}
@@ -1831,7 +1857,7 @@ button.quick-tile:focus-visible{outline:2px solid var(--accent); outline-offset:
               <div class="stat-box"><div class="stat-box-label"><svg class="icon" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/></svg>Nakit Bakiyen</div><div class="stat-box-val mono" id="stat-cash">0,00 TRY</div></div>
               <div class="stat-box"><div class="stat-box-label"><svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="9" r="6"/><circle cx="15" cy="15" r="6"/></svg>Vadeli İşlemler Bakiyesi</div><div class="stat-box-val mono" id="stat-futures">0,00 TRY</div></div>
               <div class="stat-box"><div class="stat-box-label"><svg class="icon" viewBox="0 0 24 24"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="14 7 21 7 21 14"/></svg>Açık Pozisyon Kar/Zarar</div><div class="stat-box-val up mono" id="stat-openpl">+0,00 TRY</div></div>
-              <div class="stat-box"><div class="stat-box-label"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V8a5 5 0 0 1 9.5-2.2"/></svg>Kullanılabilir Bakiye</div><div class="stat-box-val mono" id="stat-available">0,00 TRY</div></div>
+              <div class="stat-box"><div class="stat-box-label"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V8a5 5 0 0 1 9.5-2.2"/></svg>Pozisyonlardaki Teminat</div><div class="stat-box-val mono" id="stat-available">0,00 TRY</div></div>
             </div>
           </div>
 
@@ -1975,11 +2001,15 @@ button.quick-tile:focus-visible{outline:2px solid var(--accent); outline-offset:
               <div class="chart-meta">
                 <div class="chart-range"><span id="chart-range-label"></span><b class="mono" id="chart-range-change"></b></div>
                 <div class="chart-live-dot" id="chart-live"><span></span><em id="chart-live-text">Canlı</em></div>
+                <button class="chart-fs" id="chart-fs" type="button" aria-label="Tam ekran"><svg class="icon ic-open" viewBox="0 0 24 24"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg><svg class="icon ic-close" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
               </div>
             </div>
-            <div class="chart-wrap">
+            <div class="chart-wrap" id="chart-wrap">
               <svg id="trade-chart-svg" viewBox="0 0 600 260" preserveAspectRatio="none"></svg>
+              <div class="cv-plot" id="cv-plot"></div>
+              <div class="cv-axis" id="cv-axis"></div>
             </div>
+            <div class="chart-stats" id="chart-stats"></div>
           </div>
 
           <div class="card trade-ticket">
@@ -2750,7 +2780,8 @@ async function loadUserData(){
       id:x.id, symDisplay:x.sym_display, color:x.color, side:x.side, qty:Number(x.qty), qtyLabel:x.qty_label,
       entry:Number(x.entry), cat:x.cat, tickerSym:x.ticker_sym, currency:x.currency, adminAdjusted:!!x.admin_adjusted,
       override:(x.price_override==null ? null : Number(x.price_override)),
-      tp:(x.take_profit==null ? null : Number(x.take_profit)), sl:(x.stop_loss==null ? null : Number(x.stop_loss))
+      tp:(x.take_profit==null ? null : Number(x.take_profit)), sl:(x.stop_loss==null ? null : Number(x.stop_loss)),
+      margin:(Number(x.margin_spot||0) + Number(x.margin_futures||0))      // pozisyonda kilitli teminat (TL)
     })),
     closedPositions: (data.closed_positions || []).map(x=>({
       id:x.id, symDisplay:x.sym_display, color:x.color, side:x.side, qty:Number(x.qty), qtyLabel:x.qty_label,
@@ -3158,7 +3189,7 @@ function renderTopbarLeft(name){
   const el = document.getElementById('topbar-left');
   if(name==='hesabim'){
     const openPl = currentUid ? openPlTotal(cu()) : 0;
-    const total = currentUid ? (cu().balance + cu().futuresBalance + openPl) : 0;   // toplam varlık açık K/Z ile canlı oynar
+    const total = currentUid ? (cu().balance + cu().futuresBalance + lockedMarginTry(cu()) + openPl) : 0;   // toplam varlık açık K/Z ile canlı oynar
     el.innerHTML = `
       <div class="tb-compact">
         <span class="tb-compact-label">Toplam Varlık</span>
@@ -3546,7 +3577,8 @@ function tickMarket(){
         const now = Date.now();
         if(chartData.length && now - chartLastStep >= cfg.sampleMs){
           chartData.push(item.price);
-          if(chartData.length > cfg.points) chartData.shift();
+          if(chartTimes){ chartTimes.push(now); }
+          if(chartData.length > cfg.points){ chartData.shift(); if(chartTimes) chartTimes.shift(); }
           chartLastStep = now;
         } else if(chartData.length){
           chartData[chartData.length-1] = item.price;
@@ -3800,6 +3832,12 @@ function flashOnChange(el, val){            // değer arttıysa yeşil, azaldıy
   void el.offsetWidth;                      // animasyonu baştan başlat
   el.classList.add(val > prev ? 'flash-up' : 'flash-down');
 }
+/* Açık pozisyonlarda kilitli teminat (TL). Teminat işlem açılırken bakiyeden düşer, kapanınca geri döner;
+   Toplam Varlık'ta (nakit + teminat + açık K/Z) sayılmazsa işlem açar açmaz varlık teminat kadar düşmüş görünür. */
+function lockedMarginTry(u){
+  if(!u || !Array.isArray(u.positions)) return 0;
+  return u.positions.reduce((sum,p)=> sum + (Number(p.margin) || 0), 0);
+}
 function openPlTotal(u){
     if(!u || !Array.isArray(u.positions)) return 0;   // oturum yokken/yüklenirken tickMarket hata fırlatmasın
   // Her pozisyonun K/Z'si kendi para biriminde (USD/USDT/TRY) — TL'ye çevirmeden toplamak
@@ -3809,7 +3847,7 @@ function openPlTotal(u){
 }
 function renderAllocation(u){
   const total = u.balance + u.futuresBalance;
-  const equity = toDisp(total + openPlTotal(u));
+  const equity = toDisp(total + lockedMarginTry(u) + openPlTotal(u));
   const spotPct = total>0 ? (u.balance/total*100) : 0;
   const futPct = total>0 ? (u.futuresBalance/total*100) : 0;
   const donut = document.getElementById('alloc-donut');
@@ -3831,7 +3869,7 @@ function renderBalanceWidgets(){
   const u = cu();
   const openPl = openPlTotal(u);
   const cashTotal = u.balance + u.futuresBalance;
-  const total = cashTotal + openPl;          // Toplam Varlık = nakit + vadeli + açık pozisyon K/Z (canlı)
+  const total = cashTotal + lockedMarginTry(u) + openPl;   // Toplam Varlık = nakit + vadeli + kilitli teminat + açık pozisyon K/Z (canlı)
 
   const heroTotal = document.getElementById('hero-total-value');
   if(heroTotal){ heroTotal.innerHTML = fmtMoney(toDisp(total))+'<span class="cur">'+dispCur()+'</span>'; flashOnChange(heroTotal, total); }
@@ -3845,7 +3883,7 @@ function renderBalanceWidgets(){
     statOpenPl.className = 'stat-box-val mono '+(openPl>=0?'up':'down');
   }
   const statAvail = document.getElementById('stat-available');
-  if(statAvail) statAvail.textContent = cashText(u.balance);
+  if(statAvail) statAvail.textContent = cashText(lockedMarginTry(u));   // açık pozisyonlarda kilitli teminat
   const tSpot = document.getElementById('transfer-spot-balance');
   if(tSpot) tSpot.textContent = cashText(u.balance);
   const tFutures = document.getElementById('transfer-futures-balance');
@@ -4730,6 +4768,8 @@ document.getElementById('settings-goto-notifs').addEventListener('click', (e)=>{
 /* ================= TRADE SCREEN ================= */
 let currentTrade = null;
 let chartData = [];
+let chartTimes = null;      // gerçek veride her noktanın zamanı (ms); yoksa null
+let chartHover = null;      // imlecin üstünde durduğu nokta indeksi
 let chartIsReal = false;   // true: gerçek geçmiş veri, false: sentetik seri
 let currentTimeframe = '1G';
 /* Tüm zaman dilimleri TEK bir fiyat serisinin (2 dakikalık adımlarla son 30 gün) farklı pencereleridir.
@@ -4835,7 +4875,16 @@ async function fetchHistoryFrom(baseUrl, cat, sym, tf){
     const json = await res.json();
     const rows = json && json.data;
     if(!Array.isArray(rows) || rows.length < 3) return null;
-    return rows.map(r=>r.price).filter(v=>typeof v==='number' && isFinite(v) && v>0);
+    const prices = [], times = [];
+    rows.forEach(r=>{
+      if(!(typeof r.price==='number' && isFinite(r.price) && r.price>0)) return;
+      prices.push(r.price);
+      let t = r.t ?? r.time ?? r.ts ?? r.timestamp ?? r.date ?? null;
+      if(typeof t === 'number') t = t < 1e12 ? t*1000 : t; else if(typeof t === 'string') t = Date.parse(t); else t = NaN;
+      times.push(t);
+    });
+    prices.times = (times.length === prices.length && times.every(isFinite)) ? times : null;
+    return prices;
   }catch(e){ return null; }
 }
 /* Önce Supabase Edge Function'ın /history rotası denenir (canlıda ekstra kurulum gerektirmez),
@@ -4857,6 +4906,7 @@ async function generateChartData(item){
   if(myReq !== chartReqId || !currentTrade) return;   // bu arada zaman dilimi/sembol değiştiyse sonucu at
   if(real && real.length >= 3){
     chartData = real;
+    chartTimes = real.times ? real.times.slice() : null;
     chartData[chartData.length-1] = item.price;            // son nokta canlı fiyat
     chartIsReal = true;
   } else {
@@ -4866,6 +4916,7 @@ async function generateChartData(item){
     chartData = [];
     for(let k=0;k<cfg.points;k++) chartData.push(prices[Math.round(N - cfg.steps + k*stride)]);
     chartData[chartData.length-1] = item.price;
+    chartTimes = null;
     chartIsReal = false;
   }
   chartLastStep = Date.now();
@@ -4883,28 +4934,58 @@ document.querySelectorAll('#tf-tabs .tf-btn').forEach(btn=>{
   });
 });
 
+/* Grafik üstü katman: sağ fiyat ekseni, güncel fiyat etiketi, pozisyon / TP / SL çizgileri, imleç ve ipucu kutusu */
+function chartTimeAt(i){
+  const n = chartData.length;
+  if(chartTimes && chartTimes.length === n && isFinite(chartTimes[i])) return chartTimes[i];
+  const cfg = TF_CONFIG[currentTimeframe] || TF_CONFIG['1G'];
+  const span = cfg.steps * CHART_STEP_MIN * 60000;
+  return Date.now() - span + (n > 1 ? i/(n-1) : 1) * span;
+}
+function fmtChartTime(ms){
+  const short = currentTimeframe === '1S' || currentTimeframe === '4S';
+  return new Date(ms).toLocaleString('tr-TR', short ? {hour:'2-digit', minute:'2-digit'} : {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'});
+}
+function chartLevels(){
+  const out = [];
+  if(!currentTrade) return out;
+  const u = cu();
+  ((u && u.positions) || []).filter(p=>p.cat===currentTrade.cat && p.tickerSym===currentTrade.tickerSym).forEach(p=>{
+    out.push({v:p.entry, k:'entry', t:'Giriş ' + fmtPrice(p.entry) + ' · ' + p.side});
+    if(p.tp) out.push({v:p.tp, k:'tp', t:'TP ' + fmtPrice(p.tp)});
+    if(p.sl) out.push({v:p.sl, k:'sl', t:'SL ' + fmtPrice(p.sl)});
+  });
+  const tpV = parseNum((document.getElementById('tp-input')||{}).value), slV = parseNum((document.getElementById('sl-input')||{}).value);
+  if(tpV) out.push({v:tpV, k:'tp', pv:true, t:'TP ' + fmtPrice(tpV)});
+  if(slV) out.push({v:slV, k:'sl', pv:true, t:'SL ' + fmtPrice(slV)});
+  return out;
+}
 function renderChart(){
   const svg = document.getElementById('trade-chart-svg');
   if(!svg || !chartData.length) return;
-  const w=600, h=260, pad=8;
-  const min = Math.min(...chartData) * 0.997;
-  const max = Math.max(...chartData) * 1.003;
+  const w=600, h=260, pad=10, n=chartData.length;
+  const last = chartData[n-1];
+  const levels = chartLevels();
+  let lo = Math.min(...chartData), hi = Math.max(...chartData);
+  levels.forEach(l=>{ if(l.v >= last*0.75 && l.v <= last*1.25){ lo = Math.min(lo, l.v); hi = Math.max(hi, l.v); } else l.off = true; });
+  const padV = Math.max((hi-lo)*0.08, last*0.002);
+  const min = lo - padV, max = hi + padV;
   const range = (max-min) || 1;
-  const stepX = (w-2*pad)/(chartData.length-1);
-  const pts = chartData.map((v,i)=>{
-    const x = pad + i*stepX;
-    const y = h-pad - ((v-min)/range)*(h-2*pad);
-    return `${x.toFixed(1)},${y.toFixed(1)}`;
-  });
+  const stepX = (w-2*pad)/((n-1) || 1);
+  const yOf = v => h-pad - ((v-min)/range)*(h-2*pad);
+  const pts = chartData.map((v,i)=>`${(pad + i*stepX).toFixed(1)},${yOf(v).toFixed(1)}`);
   const lineStr = pts.join(' ');
   const areaStr = `${pad},${h-pad} ${lineStr} ${(w-pad).toFixed(1)},${h-pad}`;
-  const up = chartData[chartData.length-1] >= chartData[0];
+  const up = last >= chartData[0];
   const strokeColor = up ? '#22cf94' : '#f6465d';
-  const rangePct = chartData[0] > 0 ? (chartData[chartData.length-1] / chartData[0] - 1) * 100 : 0;
+  const rangePct = chartData[0] > 0 ? (last / chartData[0] - 1) * 100 : 0;
   const rLbl = document.getElementById('chart-range-label');
   const rVal = document.getElementById('chart-range-change');
   if(rLbl) rLbl.textContent = (TF_CONFIG[currentTimeframe] || TF_CONFIG['1G']).label;
   if(rVal){ rVal.textContent = (rangePct>=0 ? '+' : '') + rangePct.toFixed(2) + '%'; rVal.className = 'mono ' + (up ? 'up' : 'down'); }
+  const LV = {entry:'#9aa0b8', tp:'#22cf94', sl:'#f6465d'};
+  const grid = [0.25, 0.5, 0.75];
+  const lvLines = levels.filter(l=>!l.off).map(l=>`<line x1="${pad}" y1="${yOf(l.v).toFixed(1)}" x2="${w-pad}" y2="${yOf(l.v).toFixed(1)}" stroke="${LV[l.k]}" stroke-width="1.3" stroke-dasharray="${l.pv ? '2 4' : '6 4'}" vector-effect="non-scaling-stroke" opacity="${l.pv ? 0.8 : 0.95}"/>`).join('');
   svg.innerHTML = `
     <defs>
       <linearGradient id="chartFill" x1="0" y1="0" x2="0" y2="1">
@@ -4912,13 +4993,60 @@ function renderChart(){
         <stop offset="100%" stop-color="${strokeColor}" stop-opacity="0"/>
       </linearGradient>
     </defs>
-    <line x1="${pad}" y1="${(h*0.25).toFixed(1)}" x2="${w-pad}" y2="${(h*0.25).toFixed(1)}" stroke="#1c2032" stroke-width="1"/>
-    <line x1="${pad}" y1="${(h*0.5).toFixed(1)}" x2="${w-pad}" y2="${(h*0.5).toFixed(1)}" stroke="#1c2032" stroke-width="1"/>
-    <line x1="${pad}" y1="${(h*0.75).toFixed(1)}" x2="${w-pad}" y2="${(h*0.75).toFixed(1)}" stroke="#1c2032" stroke-width="1"/>
+    ${grid.map(f=>`<line x1="${pad}" y1="${(h*f).toFixed(1)}" x2="${w-pad}" y2="${(h*f).toFixed(1)}" stroke="#1c2032" stroke-width="1"/>`).join('')}
     <polygon points="${areaStr}" fill="url(#chartFill)" stroke="none"/>
-    <polyline points="${lineStr}" fill="none" stroke="${strokeColor}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+    <polyline points="${lineStr}" fill="none" stroke="${strokeColor}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
+    <line x1="${pad}" y1="${yOf(last).toFixed(1)}" x2="${w-pad}" y2="${yOf(last).toFixed(1)}" stroke="${strokeColor}" stroke-width="1" stroke-dasharray="2 4" vector-effect="non-scaling-stroke" opacity="0.6"/>
+    ${lvLines}
   `;
+  // ----- HTML katmanı (yazılar SVG'nin esnemesinden etkilenmesin diye ayrı) -----
+  const pct = y => Math.max(3, Math.min(97, y / h * 100)).toFixed(2);
+  const axis = document.getElementById('cv-axis'), plot = document.getElementById('cv-plot');
+  if(axis){
+    const valAt = f => min + ((h - pad - h*f) / (h - 2*pad)) * range;
+    axis.innerHTML = grid.map(f=>`<div class="cv-ax" style="top:${(f*100).toFixed(1)}%">${fmtPrice(valAt(f))}</div>`).join('') +
+      `<div class="cv-axtag ${up ? '' : 'down'}" style="top:${pct(yOf(last))}%;background:${strokeColor}">${fmtPrice(last)}</div>` +
+      (chartHover !== null ? `<div class="cv-axtag hov" style="top:${pct(yOf(chartData[Math.min(chartHover, n-1)]))}%">${fmtPrice(chartData[Math.min(chartHover, n-1)])}</div>` : '');
+  }
+  if(plot){
+    let html = levels.filter(l=>!l.off).map(l=>`<div class="cv-lv ${l.k}${l.pv ? ' pv' : ''}" style="top:${pct(yOf(l.v))}%">${l.t}</div>`).join('');
+    if(chartHover !== null){
+      const i = Math.max(0, Math.min(chartHover, n-1)), v = chartData[i];
+      const xp = ((pad + i*stepX) / w * 100).toFixed(2), yp = pct(yOf(v));
+      const tm = (chartIsReal && !chartTimes) ? '' : fmtChartTime(chartTimeAt(i));
+      const flip = parseFloat(xp) > 58;
+      html += `<div class="cv-v" style="left:${xp}%"></div><div class="cv-dot" style="left:${xp}%;top:${yp}%;background:${strokeColor}"></div>` +
+        `<div class="cv-tip" style="left:${xp}%;transform:translateX(${flip ? 'calc(-100% - 12px)' : '12px'})"><b class="mono">${fmtPrice(v)} ${currentTrade ? currentTrade.currency : ''}</b>${tm ? '<span>' + tm + '</span>' : ''}</div>`;
+    }
+    plot.innerHTML = html;
+  }
+  const st = document.getElementById('chart-stats');
+  if(st){
+    const cur = currentTrade ? ' ' + currentTrade.currency : '';
+    st.innerHTML = [['Açılış', chartData[0]], ['Yüksek', Math.max(...chartData)], ['Düşük', Math.min(...chartData)]]
+      .map(([a,b])=>`<div><small>${a}</small><b class="mono">${fmtPrice(b)}${cur}</b></div>`).join('');
+  }
 }
+(function(){
+  const wrap = document.getElementById('chart-wrap'); if(!wrap) return;
+  const move = e=>{
+    const svg = document.getElementById('trade-chart-svg'), r = svg.getBoundingClientRect();
+    if(!chartData.length || !r.width) return;
+    const w = 600, pad = 10, n = chartData.length;
+    const xv = (e.clientX - r.left) / r.width * w;
+    chartHover = Math.max(0, Math.min(n-1, Math.round((xv - pad) / ((w - 2*pad) / ((n-1) || 1)))));
+    renderChart();
+  };
+  wrap.addEventListener('pointermove', move);
+  wrap.addEventListener('pointerdown', move);
+  ['pointerleave','pointercancel'].forEach(t=>wrap.addEventListener(t, ()=>{ chartHover = null; renderChart(); }));
+  const fs = document.getElementById('chart-fs'), card = document.querySelector('.trade-chart-card');
+  if(fs && card){
+    const toggle = on => { card.classList.toggle('fs', on); document.body.style.overflow = on ? 'hidden' : ''; renderChart(); };
+    fs.addEventListener('click', ()=>toggle(!card.classList.contains('fs')));
+    document.addEventListener('keydown', e=>{ if(e.key === 'Escape' && card.classList.contains('fs')) toggle(false); });
+  }
+})();
 
 function renderTradeHeader(){
   if(!currentTrade) return;
@@ -4998,6 +5126,7 @@ function updateTpSlHints(){
   } else bar.hidden = true;
   const rr = document.getElementById('tpsl-rr');
   rr.textContent = (dist.tp && dist.sl) ? 'R/R 1 : ' + (dist.tp/dist.sl).toLocaleString('tr-TR', {maximumFractionDigits:2}) : '';
+  try{ renderChart(); }catch(_){}
 }
 ['tp-input','sl-input'].forEach(id=>document.getElementById(id).addEventListener('input', updateTpSlHints));
 document.querySelectorAll('.tpsl-mode button').forEach(b=>b.addEventListener('click', ()=>{
@@ -5814,7 +5943,8 @@ document.querySelectorAll('#crm-tabs .tab-btn').forEach(btn=>{
 /* ----- Kullanıcı detayı ----- */
 const mapCrmPos = (x)=>({ id:x.id, symDisplay:x.sym_display, side:x.side, qty:Number(x.qty), qtyLabel:x.qty_label, entry:Number(x.entry),
   exit:x.exit==null?null:Number(x.exit), pl:x.pl==null?null:Number(x.pl), cat:x.cat, tickerSym:x.ticker_sym, currency:x.currency, adminAdjusted:!!x.admin_adjusted,
-  override:(x.price_override==null ? null : Number(x.price_override)) });
+  override:(x.price_override==null ? null : Number(x.price_override)),
+  margin:(Number(x.margin_spot||0) + Number(x.margin_futures||0)) });
 
 /* Açık pozisyonlardaki GÜNCEL FİYAT / K-Z hücrelerini saniyede bir tazeler — satırı (dolayısıyla lot/giriş
    giriş kutularını) yeniden çizmez, sadece iki hücrenin metnini günceller. Böylece admin bir satırda
@@ -5827,11 +5957,15 @@ function crmOpenPlTotalTry(){
     return sum + plToTry(pnl(x, getLivePrice(x)), x.currency);
   }, 0);
 }
+function crmLockedMarginTry(){
+  if(!crmDetail) return 0;
+  return (crmDetail.positions||[]).map(mapCrmPos).reduce((sum,x)=> sum + (x.margin || 0), 0);
+}
 function crmRenderTotal(){
   const el = document.getElementById('crm-balance-total');
   if(!el || !crmDetail) return;
   const p = crmDetail.profile;
-  const total = Number(p.balance) + Number(p.futures_balance) + crmOpenPlTotalTry();
+  const total = Number(p.balance) + Number(p.futures_balance) + crmLockedMarginTry() + crmOpenPlTotalTry();
   el.textContent = crmMoney(total);
 }
 function tickCrmLivePl(){
