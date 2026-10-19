@@ -546,6 +546,7 @@ svg{display:block;}
 .td-head{display:flex; align-items:center; gap:12px; padding:16px 18px 0;}
 .td-head-mid{flex:1; min-width:0;}
 .td-sym{font-size:17px; font-weight:800; display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
+.td-name{font-size:13px; font-weight:500; letter-spacing:.2px; color:var(--text-dim); margin-top:3px;}
 .td-sub{font-size:11.5px; color:var(--text-dim); margin-top:3px;}
 .td-x{width:32px; height:32px; border-radius:10px; border:1px solid var(--border-soft); background:var(--bg); color:var(--text-dim); display:flex; align-items:center; justify-content:center; cursor:pointer; flex:none;}
 .td-x:hover{color:var(--text);} .td-x .icon{width:15px; height:15px;}
@@ -4151,7 +4152,8 @@ async function tdRender(c){
   try{ await Promise.all(['800 40px','700 20px','600 12px'].map(f=>document.fonts.load(f + ' Inter'))); }catch(_){}
   const up = c.pl >= 0, long = c.side === 'Long';
   const col = up ? v('--green') : v('--red');
-  const W = 460, H = 364, S = 3;
+  const nm = tdInstrumentName(c), hy = nm ? 88 : 78;
+  const W = 460, H = hy + 254 + 18, S = 3;
   const cv = document.createElement('canvas'); cv.width = W*S; cv.height = H*S;
   const x = cv.getContext('2d'); x.scale(S, S);
   const T = (txt, px, py, o={}) => {
@@ -4170,10 +4172,10 @@ async function tdRender(c){
   x.font = '700 12px ' + font; const sw = x.measureText(c.side).width + 20;
   tdRoundRect(x, 28 + nw + 12, 31, sw, 24, 8); x.fillStyle = long ? 'rgba(34,207,148,0.15)' : 'rgba(246,70,93,0.15)'; x.fill();
   T(c.side, 28 + nw + 12 + sw/2, 48, {w:'700', s:12, c:sc, a:'center'});
-  T(c.qtyLabel, 28, 72, {s:13, c:v('--text-dim')});
+  if(nm) T(nm, 28, 72, {w:'500', s:14, c:v('--text-dim'), ls:0.3});
   T('BorsaX', W-28, 50, {w:'800', s:16, a:'right', c:v('--text-dim')});
   // kâr/zarar kartı
-  const hx = 18, hy = 92, hw = W-36, hh = H-92-18;
+  const hx = 18, hw = W-36, hh = H-hy-18;
   tdRoundRect(x, hx, hy, hw, hh, 18);
   const g = x.createRadialGradient(W/2, hy, 0, W/2, hy, hw*0.75);
   g.addColorStop(0, up ? 'rgba(34,207,148,0.20)' : 'rgba(246,70,93,0.20)'); g.addColorStop(1, 'rgba(0,0,0,0)');
@@ -4223,6 +4225,10 @@ async function tdSaveImage(){
     console.warn('tdSaveImage', e); showToast('Görsel oluşturulamadı', 'err');
   }finally{ btn.disabled = false; }
 }
+function tdInstrumentName(c){
+  const it = (marketData[c.cat] || []).find(x=>x.sym === c.tickerSym);
+  return (it && it.name) ? it.name : '';
+}
 function tdCurve(up){
   const y0 = up ? 30 : 8, y1 = up ? 8 : 30;                      // kârda yükselen, zararda alçalan eğri
   const d = 'M0,' + y0 + ' C45,' + y0 + ' 55,' + y1 + ' 100,' + y1;
@@ -4251,8 +4257,7 @@ function openTradeDetail(id){
   const cell = (lab, val, wide) => '<div class="td-cell' + (wide ? ' wide' : '') + '"><small>' + lab + '</small><b>' + val + '</b></div>';
   document.getElementById('td-card').innerHTML =
     '<div class="td-head">' + symBadge(c.tickerSym, c.cat, 40) +
-      '<div class="td-head-mid"><div class="td-sym">' + c.symDisplay + '<span class="pos-side" style="' + sideStyle + '">' + c.side + '</span></div>' +
-      '<div class="td-sub">' + c.qtyLabel + '</div></div>' +
+      '<div class="td-head-mid"><div class="td-sym">' + c.symDisplay + '<span class="pos-side" style="' + sideStyle + '">' + c.side + '</span></div>' + (tdInstrumentName(c) ? '<div class="td-name">' + tdInstrumentName(c) + '</div>' : '') + '</div>' +
       '<button class="td-x" id="td-x" aria-label="Kapat"><svg class="icon" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>' +
     '<div class="td-hero ' + (up ? 'up' : 'down') + '">' +
       '<div class="td-hero-lab">' + (up ? 'Gerçekleşen Kâr' : 'Gerçekleşen Zarar') + '</div>' +
@@ -4799,9 +4804,10 @@ function plToTry(pl, curr){ return curr==='TRY' ? pl : pl * fxRate(); }   // poz
 function plInDispCur(pl, curr){                                // pozisyonun kendi para biriminden görüntüleme para birimine çevirir
   return toDisp(plToTry(pl, curr));
 }
-function currencyFor(cat){
+function currencyFor(cat, sym){
   if(cat==='crypto') return 'USDT';
   if(cat==='us' || cat==='commodity') return 'USD';
+  if(cat==='index') return (sym==='XU100' || sym==='XU030') ? 'TRY' : 'USD';   // BIST endeksleri TL, yabancı endeksler USD
   return 'TRY';
 }
 
@@ -4812,7 +4818,7 @@ function openTrade(cat, item){
     symDisplay: cat==='crypto' ? item.sym+'/USDT' : item.sym,
     name: item.name,
     color: colorFor(item.sym),
-    currency: currencyFor(cat)
+    currency: currencyFor(cat, item.sym)
   };
   document.getElementById('lot-input').value = '1';
   ['tp-input','sl-input'].forEach(id=>{ const e=document.getElementById(id); if(e) e.value=''; });
@@ -5052,8 +5058,23 @@ function renderTradeHeader(){
   if(!currentTrade) return;
   const item = marketData[currentTrade.cat].find(x=>x.sym===currentTrade.tickerSym);
   if(!item) return;
-  document.getElementById('trade-sym-icon').style.background = currentTrade.color;
-  document.getElementById('trade-sym-icon').textContent = currentTrade.tickerSym.slice(0,2);
+  const icEl = document.getElementById('trade-sym-icon');
+  icEl.style.background = currentTrade.color;
+  const icKey = currentTrade.cat + ':' + currentTrade.tickerSym;
+  if(icEl.dataset.key !== icKey){                          // her tikte yeniden çizip logoyu yanıp söndürmemek için yalnızca sembol değişince kur
+    icEl.dataset.key = icKey;
+    let inner = '<span class="sym-ic-letters">' + currentTrade.tickerSym.slice(0,2) + '</span>';
+    icEl.classList.remove('sym-ic-hasicon');
+    if(LOGO_CATS[currentTrade.cat]){
+      const lu = LOGO_BASE + currentTrade.cat + '/' + encodeURIComponent(currentTrade.tickerSym) + '.png';
+      const lst = logoState[lu];
+      if(lst !== 'bad'){
+        if(lst === 'ok') icEl.classList.add('sym-ic-hasicon');
+        inner += '<img class="sym-ic-img" src="' + lu + '" data-u="' + lu + '" alt="" decoding="async" style="opacity:' + (lst === 'ok' ? 1 : 0) + '" onload="logoLoaded(this)" onerror="logoFailed(this)">';
+      }
+    }
+    icEl.innerHTML = inner;
+  }
   document.getElementById('trade-sym-name').textContent = currentTrade.symDisplay;
   document.getElementById('trade-sym-full').textContent = item.name;
   document.getElementById('trade-price').textContent = fmtPrice(item.price);
