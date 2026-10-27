@@ -3914,7 +3914,7 @@ const POS_GROUP_THRESHOLD = 3;               // aynı hisseden bu sayının ÜZE
 function renderPosCard(r){
   return `<div class="pos-card" data-id="${r.p.id}">
     <div class="pos-top">
-      <div class="pos-sym">${symBadge(r.p.tickerSym, r.p.cat)}${r.p.symDisplay}${adjBadge(r.p.adminAdjusted)}<span class="pos-side" style="color:${r.p.side==='Long'?'var(--green)':'var(--red)'};background:${r.p.side==='Long'?'rgba(34,207,148,0.13)':'rgba(246,70,93,0.13)'};">${r.p.side}</span></div>
+      <div class="pos-sym">${symBadge(r.p.tickerSym, r.p.cat)}${r.p.symDisplay}${adjBadge(r.p.adminAdjusted)}<span class="pos-side" style="color:${r.p.side==='Long'?'var(--green)':'var(--red)'};background:${r.p.side==='Long'?'rgba(34,207,148,0.13)':'rgba(246,70,93,0.13)'};">${sideTR(r.p.side)}</span></div>
       <div class="mono pos-pl ${r.up?'up':'down'}" style="font-weight:700;">${r.up?'+':''}${fmtMoney(plInDispCur(r.pl, r.p.currency))} ${dispCur()}</div>
     </div>
     <div class="pos-grid">
@@ -3966,7 +3966,7 @@ function groupAgg(items){                    // grup için toplam büyüklük/y�
   });
   const totalPlPct = totalCost ? (totalPl/totalCost*100) : 0;
   const qtyStr = Number.isInteger(totalQty) ? String(totalQty) : String(Math.round(totalQty*1e8)/1e8);
-  const sideLabel = (longCount && shortCount) ? `${longCount} Long · ${shortCount} Short` : (longCount ? 'Long' : 'Short');
+  const sideLabel = (longCount && shortCount) ? `${longCount} Alış · ${shortCount} Satış` : (longCount ? 'Alış' : 'Satış');
   return {first, totalPl, totalPlPct, up: totalPl>=0, qtyStr, unit, sideLabel};
 }
 
@@ -4040,7 +4040,7 @@ function renderAccountWidgets(){
   if(accBody){
     accBody.innerHTML = rowsHtml.slice(0, DASH_LIMIT).map(r=>`<tr>
       <td><div class="badge-sym">${symBadge(r.p.tickerSym, r.p.cat)}${r.p.symDisplay}${adjBadge(r.p.adminAdjusted)}</div></td>
-      <td style="color:${r.p.side==='Long'?'var(--green)':'var(--red)'};font-weight:700; font-size:11.5px;">${r.p.side}</td>
+      <td style="color:${r.p.side==='Long'?'var(--green)':'var(--red)'};font-weight:700; font-size:11.5px;">${sideTR(r.p.side)}</td>
       <td class="mono num">${unleveragedQtyLabel(r.p.qtyLabel)}</td>
       <td class="mono num">${fmtPrice(r.p.entry)}</td>
       <td class="mono num">${fmtPrice(r.cur)}</td>
@@ -4073,7 +4073,7 @@ function renderAccountWidgets(){
         return `<div class="closed-item" data-closed-id="${c.id}" role="button" tabindex="0">
           ${symBadge(c.tickerSym, c.cat)}
           <div class="closed-item-mid">
-            <div class="closed-item-sym">${c.symDisplay}${adjBadge(c.adminAdjusted)}<span class="pos-side" style="color:${c.side==='Long'?'var(--green)':'var(--red)'};background:${c.side==='Long'?'rgba(34,207,148,0.13)':'rgba(246,70,93,0.13)'};">${c.side}</span></div>
+            <div class="closed-item-sym">${c.symDisplay}${adjBadge(c.adminAdjusted)}<span class="pos-side" style="color:${c.side==='Long'?'var(--green)':'var(--red)'};background:${c.side==='Long'?'rgba(34,207,148,0.13)':'rgba(246,70,93,0.13)'};">${sideTR(c.side)}</span></div>
             <div class="closed-item-meta">${unleveragedQtyLabel(c.qtyLabel)} · Giriş ${fmtPrice(c.entry)} → Çıkış ${fmtPrice(c.exit)}</div>
           </div>
           <div>
@@ -4140,6 +4140,13 @@ let successModalNavigate = true;
 /* ===== Kapanan işlem detayı ===== */
 /* ===== İşlem görselini PNG olarak kaydet (canvas ile çizilir, dış kütüphane gerekmez) ===== */
 let tdCurrent = null;
+/* Para birimi simgesi (rakamın sonunda): USD → $ , TRY → ₺ ; diğerleri (USDT vb.) yazıyla */
+function tdSym(code){ return code === 'USD' ? '$' : (code === 'TRY' ? '₺' : code); }
+function tdAmt(v, code, plus){                       // işaretli tutar: +5,38 $ · -120,00 ₺
+  const sign = v < 0 ? '-' : (plus ? '+' : '');
+  return sign + fmtMoney(Math.abs(v)) + ' ' + tdSym(code);
+}
+function tdPrice(v, code){ return fmtPrice(v) + ' ' + tdSym(code); }
 function tdRoundRect(ctx, x, y, w, h, r){
   ctx.beginPath(); ctx.moveTo(x+r, y);
   ctx.arcTo(x+w, y, x+w, y+h, r); ctx.arcTo(x+w, y+h, x, y+h, r);
@@ -4168,10 +4175,10 @@ async function tdRender(c){
   // başlık
   T(c.symDisplay, 28, 50, {w:'800', s:24});
   x.font = '800 24px ' + font; const nw = x.measureText(c.symDisplay).width;
-  const sc = long ? v('--green') : v('--red'), pw = x.measureText(c.side).width; // yalnızca ölçüm için
-  x.font = '700 12px ' + font; const sw = x.measureText(c.side).width + 20;
+  const sc = long ? v('--green') : v('--red'), pw = x.measureText(sideTR(c.side)).width; // yalnızca ölçüm için
+  x.font = '700 12px ' + font; const sw = x.measureText(sideTR(c.side)).width + 20;
   tdRoundRect(x, 28 + nw + 12, 31, sw, 24, 8); x.fillStyle = long ? 'rgba(34,207,148,0.15)' : 'rgba(246,70,93,0.15)'; x.fill();
-  T(c.side, 28 + nw + 12 + sw/2, 48, {w:'700', s:12, c:sc, a:'center'});
+  T(sideTR(c.side), 28 + nw + 12 + sw/2, 48, {w:'700', s:12, c:sc, a:'center'});
   if(nm) T(nm, 28, 72, {w:'500', s:14, c:v('--text-dim'), ls:0.3});
   T('BorsaX', W-28, 50, {w:'800', s:16, a:'right', c:v('--text-dim')});
   // kâr/zarar kartı
@@ -4182,13 +4189,13 @@ async function tdRender(c){
   x.fillStyle = v('--bg'); x.fill(); x.fillStyle = g; x.fill();
   x.strokeStyle = 'rgba(255,255,255,0.07)'; x.lineWidth = 1; x.stroke();
   T(up ? 'GERÇEKLEŞEN KÂR' : 'GERÇEKLEŞEN ZARAR', W/2, hy+34, {w:'700', s:11, c:v('--text-dim'), a:'center', ls:1.2});
-  T((up?'+':'') + fmtMoney(plInDispCur(c.pl, c.currency)) + ' ' + dispCur(), W/2, hy+82, {w:'800', s:40, c:col, a:'center'});
+  T(tdAmt(plInDispCur(c.pl, c.currency), dispCur(), true), W/2, hy+82, {w:'800', s:40, c:col, a:'center'});
   x.strokeStyle = 'rgba(255,255,255,0.09)'; x.beginPath(); x.moveTo(hx+22, hy+108); x.lineTo(hx+hw-22, hy+108); x.stroke();
   // giriş / çıkış
   T('GİRİŞ', hx+22, hy+138, {w:'700', s:10.5, c:v('--text-dim'), ls:1});
-  T(fmtPrice(c.entry) + ' ' + c.currency, hx+22, hy+162, {w:'800', s:18, c:col});
+  T(tdPrice(c.entry, c.currency), hx+22, hy+162, {w:'800', s:18, c:col});
   T('ÇIKIŞ', hx+hw-22, hy+138, {w:'700', s:10.5, c:v('--text-dim'), a:'right', ls:1});
-  T(fmtPrice(c.exit) + ' ' + c.currency, hx+hw-22, hy+162, {w:'800', s:18, c:col, a:'right'});
+  T(tdPrice(c.exit, c.currency), hx+hw-22, hy+162, {w:'800', s:18, c:col, a:'right'});
   // eğri
   const x0 = hx+hw*0.36, x1 = hx+hw*0.64, y0 = up ? hy+158 : hy+128, y1 = up ? hy+128 : hy+158;
   const lg = x.createLinearGradient(x0, 0, x1, 0); lg.addColorStop(0, 'rgba(255,255,255,0.18)'); lg.addColorStop(1, col);
@@ -4257,15 +4264,15 @@ function openTradeDetail(id){
   const cell = (lab, val, wide) => '<div class="td-cell' + (wide ? ' wide' : '') + '"><small>' + lab + '</small><b>' + val + '</b></div>';
   document.getElementById('td-card').innerHTML =
     '<div class="td-head">' + symBadge(c.tickerSym, c.cat, 40) +
-      '<div class="td-head-mid"><div class="td-sym">' + c.symDisplay + '<span class="pos-side" style="' + sideStyle + '">' + c.side + '</span></div>' + (tdInstrumentName(c) ? '<div class="td-name">' + tdInstrumentName(c) + '</div>' : '') + '</div>' +
+      '<div class="td-head-mid"><div class="td-sym">' + c.symDisplay + '<span class="pos-side" style="' + sideStyle + '">' + sideTR(c.side) + '</span></div>' + (tdInstrumentName(c) ? '<div class="td-name">' + tdInstrumentName(c) + '</div>' : '') + '</div>' +
       '<button class="td-x" id="td-x" aria-label="Kapat"><svg class="icon" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>' +
     '<div class="td-hero ' + (up ? 'up' : 'down') + '">' +
       '<div class="td-hero-lab">' + (up ? 'Gerçekleşen Kâr' : 'Gerçekleşen Zarar') + '</div>' +
-      '<div class="td-hero-val mono">' + (up ? '+' : '') + fmtMoney(plDisp) + ' ' + dispCur() + '</div>' +
+      '<div class="td-hero-val mono">' + tdAmt(plDisp, dispCur(), true) + '</div>' +
       '<div class="td-path ' + (up ? 'up' : 'down') + '">' +
-        '<div class="td-node"><small>Giriş</small><b class="mono">' + fmtPrice(c.entry) + ' ' + c.currency + '</b></div>' +
+        '<div class="td-node"><small>Giriş</small><b class="mono">' + tdPrice(c.entry, c.currency) + '</b></div>' +
         '<div class="td-line">' + tdCurve(up) + '</div>' +
-        '<div class="td-node r"><small>Çıkış</small><b class="mono">' + fmtPrice(c.exit) + ' ' + c.currency + '</b></div></div>' +
+        '<div class="td-node r"><small>Çıkış</small><b class="mono">' + tdPrice(c.exit, c.currency) + '</b></div></div>' +
       '<div class="td-dates one"><div><small>Kapanış</small><b>' + (c.closedAtRaw ? trDate(c.closedAtRaw) : c.closedDate) + '</b></div></div>' +
     '</div>' +
     '<button type="button" class="td-save" id="td-save"><svg class="icon" viewBox="0 0 24 24"><path d="M12 3v12"/><polyline points="7 10 12 15 17 10"/><path d="M5 21h14"/></svg>Görseli Kaydet</button>';
@@ -4804,6 +4811,8 @@ function plToTry(pl, curr){ return curr==='TRY' ? pl : pl * fxRate(); }   // poz
 function plInDispCur(pl, curr){                                // pozisyonun kendi para biriminden görüntüleme para birimine çevirir
   return toDisp(plToTry(pl, curr));
 }
+/* Görünen yön adı: veritabanında Long/Short saklanır, ekranda Alış/Satış gösterilir */
+function sideTR(side){ return side === 'Long' ? 'Alış' : (side === 'Short' ? 'Satış' : side); }
 function currencyFor(cat, sym){
   if(cat==='crypto') return 'USDT';
   if(cat==='us' || cat==='commodity') return 'USD';
@@ -4957,7 +4966,7 @@ function chartLevels(){
   if(!currentTrade) return out;
   const u = cu();
   ((u && u.positions) || []).filter(p=>p.cat===currentTrade.cat && p.tickerSym===currentTrade.tickerSym).forEach(p=>{
-    out.push({v:p.entry, k:'entry', t:'Giriş ' + fmtPrice(p.entry) + ' · ' + p.side});
+    out.push({v:p.entry, k:'entry', t:'Giriş ' + fmtPrice(p.entry) + ' · ' + sideTR(p.side)});
     if(p.tp) out.push({v:p.tp, k:'tp', t:'TP ' + fmtPrice(p.tp)});
     if(p.sl) out.push({v:p.sl, k:'sl', t:'SL ' + fmtPrice(p.sl)});
   });
@@ -6159,7 +6168,7 @@ function renderCrmDetail(){
       : `<span style="font-size:11px; color:var(--text-dim2);">Yetkiniz yok</span>`;
     return `<tr data-pos-id="${esc(x.id)}">
       <td><div class="badge-sym">${symBadge(x.tickerSym, x.cat)}${esc(x.symDisplay)}${adjBadge(x.adminAdjusted)}</div></td>
-      <td style="color:${x.side==='Long'?'var(--green)':'var(--red)'};font-weight:700;">${x.side}</td>
+      <td style="color:${x.side==='Long'?'var(--green)':'var(--red)'};font-weight:700;">${sideTR(x.side)}</td>
       <td class="num">${lotCell}</td><td class="num">${entryCell}</td><td class="num">${exitCell}</td>
       <td class="mono num" data-live="price">${fmtPrice(cur)}</td>
       <td class="mono num ${up?'up':'down'}" data-live="pl">${up?'+':''}${crmPlMoney(pl, x.currency)}</td>
@@ -6175,7 +6184,7 @@ function renderCrmDetail(){
     const up = c.pl>=0;
     return `<tr>
       <td><div class="badge-sym">${symBadge(c.tickerSym, c.cat)}${esc(c.symDisplay)}${adjBadge(c.adminAdjusted)}</div></td>
-      <td style="color:${c.side==='Long'?'var(--green)':'var(--red)'};font-weight:700;">${c.side}</td>
+      <td style="color:${c.side==='Long'?'var(--green)':'var(--red)'};font-weight:700;">${sideTR(c.side)}</td>
       <td class="mono num">${esc(crmUnleveragedLabel(c.qtyLabel))}</td><td class="mono num">${fmtPrice(c.entry)}</td><td class="mono num">${fmtPrice(c.exit)}</td>
       <td class="mono num ${up?'up':'down'}">${up?'+':''}${crmPlMoney(c.pl, c.currency)}</td></tr>`;
   }).join('');
