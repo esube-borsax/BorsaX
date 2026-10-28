@@ -3309,6 +3309,13 @@ const MARKET_SCHEDULES = {
   hongkong: {tz:'Asia/Hong_Kong',   open:'09:30', close:'16:00', lunch:['12:00','13:00']},
   china:    {tz:'Asia/Shanghai',    open:'09:30', close:'15:00', lunch:['11:30','13:00']},
 };
+// Borsa İstanbul resmî tatil takvimi (Pay Piyasası). 'closed' = tam gün kapalı; 'HH:MM' = yarım gün, o saatte kapanır.
+// Kaynak: Borsa İstanbul "Pay Piyasası 2026 Yılı Tatil Tablosu". Her yıl yeni yılın tablosu yayımlanınca buraya eklenir.
+const BIST_HOLIDAYS = {
+  '2026-10-28': '13:00',   // Cumhuriyet Bayramı arifesi (yarım gün)
+  '2026-10-29': 'closed',  // Cumhuriyet Bayramı
+  '2027-01-01': 'closed',  // Yılbaşı
+};
 // Her endeksin ait olduğu borsa (BIST100 → BIST saatleri, S&P500 → ABD saatleri vb.)
 const INDEX_MARKET_MAP = {
   XU100:'bist', XU030:'bist',
@@ -3318,20 +3325,26 @@ const INDEX_MARKET_MAP = {
 };
 
 function getZonedParts(tz){
-  const fmt = new Intl.DateTimeFormat('en-US', {timeZone:tz, weekday:'short', hour:'2-digit', minute:'2-digit', hour12:false});
+  const fmt = new Intl.DateTimeFormat('en-US', {timeZone:tz, weekday:'short', year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit', hour12:false});
   const map = {};
   fmt.formatToParts(new Date()).forEach(p=>{ map[p.type]=p.value; });
-  return {weekday:map.weekday, hour:parseInt(map.hour,10)%24, minute:parseInt(map.minute,10)};
+  return {weekday:map.weekday, hour:parseInt(map.hour,10)%24, minute:parseInt(map.minute,10), date:map.year + '-' + map.month + '-' + map.day};
 }
 function timeToMinutes(hhmm){ const [h,m]=hhmm.split(':').map(Number); return h*60+m; }
 
 function isScheduleOpen(key){
   const sched = MARKET_SCHEDULES[key];
   if(!sched) return true;
-  const {weekday, hour, minute} = getZonedParts(sched.tz);
+  const {weekday, hour, minute, date} = getZonedParts(sched.tz);
   if(weekday==='Sat' || weekday==='Sun') return false;
+  let closeAt = sched.close;
+  if(key === 'bist'){                                  // resmî tatil / yarım gün
+    const h = BIST_HOLIDAYS[date];
+    if(h === 'closed') return false;
+    if(h) closeAt = h;
+  }
   const nowMin = hour*60+minute;
-  if(nowMin < timeToMinutes(sched.open) || nowMin >= timeToMinutes(sched.close)) return false;
+  if(nowMin < timeToMinutes(sched.open) || nowMin >= timeToMinutes(closeAt)) return false;
   if(sched.lunch){
     const [lStart,lEnd] = sched.lunch;
     if(nowMin >= timeToMinutes(lStart) && nowMin < timeToMinutes(lEnd)) return false;
