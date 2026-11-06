@@ -5327,7 +5327,10 @@ async function executeTrade(side){
     });
     if(error) throw error;
     await refreshUserData();
-    goPage('pozisyonlar');
+    // İşlem ekranında kal: onay göster, TP/SL kutularını temizle, grafikte yeni pozisyon çizgilerini ve teminatı tazele
+    ['tp-input','sl-input'].forEach(id=>{ const e = document.getElementById(id); if(e) e.value = ''; });
+    try{ updateOrderSummary(); renderChart(); }catch(_){}
+    showToast(currentTrade.symDisplay + ' · ' + sideTR(side==='buy' ? 'Long' : 'Short') + ' · ' + effQty + ' ' + unitLabel + ' işlem açıldı', 'ok');
   }catch(e){
     showErrorModal('İşlem Açılamadı', friendlyError(e));
   }finally{
